@@ -10,3 +10,15 @@
       margin: auto;
   }
 }
+
+img {
+  max-width: 84%;
+  height: auto;
+  border-radius: 12px;
+}
+
+@media screen and (min-width: 1200px) {
+  img {
+      max-width: 44%;
+  }
+}
