@@ -1,7 +1,6 @@
-import { NextFunction, Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 
-var express = require('express');
-var router = express.Router();
+const router = express.Router();
 
 /* GET home page. */
 router.get('/', function (req: Request, res: Response, next: NextFunction) {
@@ -11,10 +10,14 @@ router.get('/', function (req: Request, res: Response, next: NextFunction) {
 
   let random = Math.floor(Math.random() * characters.length);
 
-  res.render('index', { title: "Always Sunny Episode Picker", message: `${characters[random]} says you should watch season ${season}, episode ${episode}.` });
+  Promise.resolve().then(() => res.render('indexxxxxxxx',
+    {
+      title: "Always Sunny Episode Picker",
+      message: `${characters[random]} says you should watch season ${season}, episode ${episode}.`
+    })).catch(next);
 });
 
-function getSeasonOrEpisode(min: number, max: number) {
+function getSeasonOrEpisode(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min) + min);
 }
 

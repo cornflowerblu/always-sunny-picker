@@ -1,6 +1,12 @@
 extends layout
 
-block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+block content 
+  div(class="d-flex align-items-center justify-content-center vh-100")
+    div(class="text-center row")
+      h1(class="text-danger fs-1 pb-3") Oops!
+      div(class=" col-md-6")
+      img(src="https://images.unsplash.com/photo-1425082661705-1834bfd09dca" alt="" class="img-fluid")
+      div(class=" col-md-6 mt-5")
+      span(class="text-danger fs-3") Something went wrong on our end.
+        p(class="lead") Use your back button or the button below to go to the homepage.
+        a(href="/" class="btn btn-primary") Go Home
