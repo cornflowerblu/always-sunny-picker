@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build": "npx tsc",
-    "start": "npx tsc && node ./bin/www"
+    "start": "node ./bin/www",
+    "dev": "npm build && npm start"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
