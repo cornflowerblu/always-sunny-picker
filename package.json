@@ -5,7 +5,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node ./bin/www",
-    "dev": "npm build && npm start"
+    "dev": "npm run build && npm start"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
