@@ -15,6 +15,7 @@ router.get('/', function (req: Request, res: Response, next: NextFunction) {
       title: "Always Sunny Episode Picker",
       message: `${characters[random]} says you should watch season ${season}, episode ${episode}.`
     })).catch(next);
+
 });
 
 function getSeasonOrEpisode(min: number, max: number): number {
