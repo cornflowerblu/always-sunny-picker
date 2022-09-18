@@ -1,0 +1,12 @@
+.recommendation {
+  display: block;
+  width: auto;
+  text-align: center;
+}
+
+@media screen and (min-width: 1200px) {
+  .recommendation {
+      width: 50%;
+      margin: auto;
+  }
+}
