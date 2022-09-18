@@ -10,7 +10,7 @@ router.get('/', function (req: Request, res: Response, next: NextFunction) {
 
   let random = Math.floor(Math.random() * characters.length);
 
-  Promise.resolve().then(() => res.render('indexxxxxxxx',
+  Promise.resolve().then(() => res.render('index',
     {
       title: "Always Sunny Episode Picker",
       message: `${characters[random]} says you should watch season ${season}, episode ${episode}.`
