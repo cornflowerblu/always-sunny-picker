@@ -3,8 +3,7 @@
   "version": "1.0.1",
   "private": true,
   "scripts": {
-    "install": "npm i",
-    "build": "npm tsc",
+    "build": "npx tsc",
     "start": "npx tsc && node ./bin/www"
   },
   "dependencies": {
