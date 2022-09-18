@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
     
   let random = Math.floor(Math.random() * characters.length);
 
-  res.render('index', { title: "Alway's Sunny Episode Picker", message: `${characters[random]} says you should watch season ${season}, episode ${episode}.` });
+  res.render('index', { title: "Always Sunny Episode Picker", message: `${characters[random]} says you should watch season ${season}, episode ${episode}.` });
 });
 
 function getSeasonOrEpisode(min, max) {
