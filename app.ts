@@ -36,7 +36,7 @@ app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
     res.status(err.status || 500);
     res.render('error-dev');
   } else {
-    // render a user-friendly page for prod
+    // render a user-friendly page for production
     res.status(err.status || 500);
     res.render('error');
   }
