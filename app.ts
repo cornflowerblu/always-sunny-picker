@@ -16,7 +16,12 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+
+const webpHeaders = { setHeaders: function (res: any, path: any, stat: any) {
+  res.set("Accept", "image/avif,image/webp,image/*,*/*;q=0.8")
+}};
+
+app.use(express.static(path.join(__dirname, 'public'), webpHeaders));
 
 app.use('/', indexRouter);
 
