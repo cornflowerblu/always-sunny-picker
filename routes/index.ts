@@ -21,7 +21,9 @@ router.get('/', function (req: Request, res: Response, next: NextFunction) {
     {
       title: "Always Sunny Episode Picker",
       image: character.image,
-      message: `${character.name} says you should watch \n Season ${season}, Episode ${episode}.`
+      name: character.name,
+      season: season,
+      episode: episode
     })).catch(next);
 
 });
