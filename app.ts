@@ -9,6 +9,7 @@ import invariant from 'tiny-invariant';
 // Set up the app
 require('dotenv').config();
 const indexRouter = require('./routes/index');
+const episodeRouter = require('./routes/episode')
 const app = express();
 
 // view engine setup
@@ -43,7 +44,8 @@ const webpHeaders = {
 
 app.use(express.static(path.join(__dirname, 'public'), webpHeaders));
 
-app.use('/', indexRouter);
+// Register routers
+app.use('/', indexRouter, episodeRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req: Request, res: Response, next: NextFunction) {
