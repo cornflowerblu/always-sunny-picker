@@ -14,4 +14,9 @@ block content
       input(type='submit', value='Submit')
   #data
     if data
-      .content ID: #{data.insert_episodes.returning[0].id} <br /> Title: #{data.insert_episodes.returning[0].title}
+      .content 
+        p| <strong>ID:</strong> #{data.insert_episodes.returning[0].id} 
+        p| <strong>Season:</strong> #{data.insert_episodes.returning[0].season.season_number}
+        p| <strong>Episode:</strong> #{data.insert_episodes.returning[0].episode_number}
+        p| <strong>Title:</strong> #{data.insert_episodes.returning[0].title}
+        p| <strong>Description:</strong> #{data.insert_episodes.returning[0].description}
