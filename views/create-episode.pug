@@ -6,27 +6,27 @@ block content
       form(action='/episode/new', method='POST')
         p
           | Season Number:
-          input(type='text', name='season_number', value= values.season_number, class="episodes")
+          input(type='text', name='season_number', value= values.season_number, class='episodes')
           | Episode Number: 
-          input(type='text', name='episode_number', value= values.episode_number, class="episodes")
+          input(type='text', name='episode_number', value= values.episode_number, class='episodes')
           | Title: 
-          input(type='text', name='title', value= values.title, class="episodes")
+          input(type='text', name='title', value= values.title, class='episodes')
           | Description: 
-          input(type='text', name='description', value= values.description, class="episodes")
-          input(type='submit', value='Submit', class="episodes")
-        p(class="text-danger") #{message}
+          input(type='text', name='description', value= values.description, class='episodes')
+          input(type='submit', value='Submit', class='episodes')
+        p(class='text-danger') #{message}
     else
       form(action='/episode/new', method='POST')
         p
           | Season Number:
-          input(type='text', name='season_number', value= '', class="episodes")
+          input(type='text', name='season_number', value= '', class='episodes')
           | Episode Number: 
-          input(type='text', name='episode_number', value= '', class="episodes")
+          input(type='text', name='episode_number', value= '', class='episodes')
           | Title: 
-          input(type='text', name='title', value= '', class="episodes")
+          input(type='text', name='title', value= '', class='episodes')
           | Description: 
-          input(type='text', name='description', value= '', class="episodes")
-          input(type='submit', value='Submit', class="episodes")
+          input(type='text', name='description', value= '', class='episodes')
+          input(type='submit', value='Submit', class='episodes')
   #data
     if data
       .content 
