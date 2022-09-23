@@ -6,7 +6,7 @@ import { getCharactersWithImages } from "../graphql/get-character-with-image";
 
 const router = express.Router();
 
-/* GET main shuffler and v2. */
+// GET main shuffler which pulls from memory
 router.get('/', function (req: Request, res: Response, next: NextFunction) {
   const season = getSeasonOrEpisode(1, 15);
   const episode = getSeasonOrEpisode(1, 10)
@@ -25,20 +25,20 @@ router.get('/', function (req: Request, res: Response, next: NextFunction) {
 
 });
 
-// v2 pulls seasons and episode counts from the db because different seasons can have different numbers of episodes
+// v2 pulls all content from the db via GraphQL & Hasura
 router.get('/v2', async function (req: Request, res: Response, next: NextFunction) {
   const seasonEpisode = await getSeasonsEpisodeCount({}, adminRequestHeaders);
-  
-  const item = seasonEpisode.seasons[Math.floor(Math.random()*seasonEpisode.seasons.length)];
+
+  const item = seasonEpisode.seasons[Math.floor(Math.random() * seasonEpisode.seasons.length)];
   const season = item.season_number
   const episodeCount = item.episodes_aggregate.aggregate.count
   const episode = getEpisode(episodeCount)
 
-  const charactersWithImages = await getCharactersWithImages({show: '950e38a3-3242-44dc-8585-fd30ced6627e'}, adminRequestHeaders)
- 
+  const charactersWithImages = await getCharactersWithImages({ show: '950e38a3-3242-44dc-8585-fd30ced6627e' }, adminRequestHeaders)
+
   let random = Math.floor(Math.random() * charactersWithImages.characters.length);
   const character = charactersWithImages.characters[random]
-  
+
   Promise.resolve().then(() => res.render('index',
     {
       title: "Always Sunny Episode Picker",
@@ -50,6 +50,7 @@ router.get('/v2', async function (req: Request, res: Response, next: NextFunctio
 
 });
 
+// Functions leveraged in the controllers above
 function getSeasonOrEpisode(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min) + min);
 }

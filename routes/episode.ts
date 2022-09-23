@@ -4,11 +4,12 @@ import { getSeasonById } from "../graphql/get-season-id";
 import { adminRequestHeaders } from "../app";
 import invariant from "tiny-invariant";
 
+// "Global" variables in scope for the entire file
 const router = express.Router();
+const token = process.env.AUTH_TOKEN
 
+// Blank entry form protected by query string auth
 router.get('/episode', async (req: Request, res: Response, next: NextFunction) => {
-  const token = process.env.AUTH_TOKEN
-
   invariant(token, "AUTH_TOKEN not set!")
   if (req.query.auth === token) {
     res.render('create-episode')
@@ -17,8 +18,9 @@ router.get('/episode', async (req: Request, res: Response, next: NextFunction) =
   }
 });
 
+// The form post action and error handling
 router.post('/episode/new', async (req: Request, res: Response, next: NextFunction) => {
-  let values = Object.assign({}, req.body)
+  const values = Object.assign({}, req.body)
   const { season_number, episode_number, title, description } = req.body
 
   if (!season_number || !episode_number || !title || !description)
