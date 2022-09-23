@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import { getSeasonsEpisodeCount } from "../graphql/season-episode-counts";
 import { adminRequestHeaders } from "../app";
 import { characters } from '../public/constants/characters'
+import { getCharactersWithImages } from "../graphql/get-character-with-image";
 
 const router = express.Router();
 
@@ -29,18 +30,19 @@ router.get('/v2', async function (req: Request, res: Response, next: NextFunctio
   const seasonEpisode = await getSeasonsEpisodeCount({}, adminRequestHeaders);
   const item = seasonEpisode.seasons[Math.floor(Math.random()*seasonEpisode.seasons.length)];
 
+  const charactersWithImages = await getCharactersWithImages({show: '950e38a3-3242-44dc-8585-fd30ced6627e'}, adminRequestHeaders)
   const season = item.season_number
   const episodeCount = item.episodes_aggregate.aggregate.count
   const episode = getEpisode(episodeCount)
 
-  let random = Math.floor(Math.random() * characters.length);
+  let random = Math.floor(Math.random() * charactersWithImages.characters.length);
 
-  const character = characters[random]
+  const character = charactersWithImages.characters[random]
   Promise.resolve().then(() => res.render('index',
     {
       title: "Always Sunny Episode Picker",
-      image: character.image,
-      name: character.name,
+      image: character.image_url,
+      name: character.first_name,
       season: season,
       episode: episode
     })).catch(next);
