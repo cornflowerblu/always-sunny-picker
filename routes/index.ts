@@ -32,6 +32,16 @@ router.get('/', function (req: Request, res: Response, next: NextFunction) {
 
 });
 
+router.get('/episode', async (req: Request, res: Response, next: NextFunction) => {
+  const token = process.env.AUTH_TOKEN
+
+  invariant(token, "AUTH_TOKEN not set!")
+  if (req.headers.auth === token) {
+    res.render('create-episode')
+  }
+  res.render('error');
+});
+
 router.post('/episode/new', async (req: Request, res: Response, next: NextFunction) => {
   const token = process.env.AUTH_TOKEN
 
@@ -55,19 +65,8 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
   res.render('error');
 });
 
-router.get('/episode', async (req: Request, res: Response, next: NextFunction) => {
-  const token = process.env.AUTH_TOKEN
-
-  invariant(token, "AUTH_TOKEN not set!")
-  if (req.headers.auth === token) {
-    res.render('create-episode')
-  }
-  res.render('error');
-})
-
 function getSeasonOrEpisode(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min) + min);
 }
-
 
 module.exports = router;
