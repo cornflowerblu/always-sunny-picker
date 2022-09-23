@@ -17,7 +17,7 @@ const query = gql`
     }
   }`
 
-type EpisodeVariables = {
+type AddEpisodeInput = {
   episode: {
     season_id: string,
     episode_number: number,
@@ -26,4 +26,18 @@ type EpisodeVariables = {
   }
 }
 
-export const createEpisode = async (variables: EpisodeVariables, requestHeaders: {}) => await gqlClient.request(query, variables, requestHeaders)
+type AddEpisodeOutput = {
+  insert_episodes: {
+    returning: [{
+      id: string,
+      episode_number: number,
+      title: string,
+      description: string,
+      season: {
+        season_number: number
+      }
+    }]
+  }
+}
+
+export const createEpisode = async (variables: AddEpisodeInput, requestHeaders: {}) => <AddEpisodeOutput> await gqlClient.request(query, variables, requestHeaders)

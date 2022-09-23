@@ -70,8 +70,9 @@ router.get('/episode', async (req: Request, res: Response, next: NextFunction) =
   invariant(token, "AUTH_TOKEN not set!")
   if (req.query.auth === token) {
     res.render('create-episode')
+  } else {
+    res.render('error');
   }
-  res.render('error');
 });
 
 router.post('/episode/new', async (req: Request, res: Response, next: NextFunction) => {

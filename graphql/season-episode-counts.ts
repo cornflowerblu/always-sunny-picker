@@ -3,15 +3,26 @@ import { gql } from 'graphql-request'
 
 
 const query = gql`
-query ShowSeasons {
-  seasons(where: {episodes: {_not: {id: {_is_null: true}}}}, order_by: {season_number: asc}) {
-    season_number
-    episodes_aggregate {
-      aggregate {
-        count
+  query ShowSeasons {
+    seasons(where: {episodes: {_not: {id: {_is_null: true}}}}, order_by: {season_number: asc}) {
+      season_number
+      episodes_aggregate {
+        aggregate {
+          count
+        }
       }
     }
-  }
-}`
+  }`
 
-export const getSeasonsEpisodeCount = async (variables: {}, requestHeaders: {}) => await gqlClient.request(query, variables, requestHeaders)
+type ShowSeasonsOutput = {
+  seasons: [{
+    season_number: number,
+    episodes_aggregate: {
+      aggregate: {
+        count: number
+      }
+    }
+  }]
+}
+
+export const getSeasonsEpisodeCount = async (variables: {}, requestHeaders: {}) => <ShowSeasonsOutput> await gqlClient.request(query, variables, requestHeaders)

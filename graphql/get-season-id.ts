@@ -3,14 +3,22 @@ import { gql } from 'graphql-request'
 
 
 const query = gql`
-query GetSeasonIdByNumber($seasonNumber: Int!) {
-  seasons(where: {season_number: {_eq: $seasonNumber}}) {
-    id
-  }
-}`
+  query GetSeasonIdByNumber($seasonNumber: Int!) {
+    seasons(where: {season_number: {_eq: $seasonNumber}}) {
+      id
+    }
+  }`
 
-type SeasonNumber = {
+type GetSeasonIdByNumberInput = {
   seasonNumber: number;
 }
 
-export const getSeasonById = async (variables: SeasonNumber, requestHeaders: {}) => await gqlClient.request(query, variables, requestHeaders)
+type GetSeasonIdByNumberResponse = {
+  seasons: [
+    {
+      id: string
+    }
+  ]
+}
+
+export const getSeasonById = async (variables: GetSeasonIdByNumberInput, requestHeaders: {}) => <GetSeasonIdByNumberResponse> await gqlClient.request(query, variables, requestHeaders)
