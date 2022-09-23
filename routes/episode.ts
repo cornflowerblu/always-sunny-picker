@@ -18,13 +18,17 @@ router.get('/episode', async (req: Request, res: Response, next: NextFunction) =
 });
 
 router.post('/episode/new', async (req: Request, res: Response, next: NextFunction) => {
-  const values = req.body
+  let values = Object.assign({}, req.body)
+  const { season_number, episode_number, title, description } = req.body
+
+  if (!season_number || !episode_number || !title || !description)
+    return res.render('create-episode', { values, message: 'All fields on this form are required.' });
 
   try {
     const seasonId = await getSeasonById({
       seasonNumber: req.body.season_number
     }, adminRequestHeaders);
-  
+
     const data = await createEpisode({
       episode:
       {
@@ -34,15 +38,14 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
         description: req.body.description
       }
     }, adminRequestHeaders);
-    res.render('create-episode', { data })    
+    res.render('create-episode', { data })
   } catch {
     if (values) {
-      res.render('create-episode', { values, message: 'There was a problem submitting your form, please try again.'});
+      res.render('create-episode', { values, message: 'There was a problem submitting your form, please try again.' });
     } else {
       res.render('error');
     }
   }
-
 });
 
 module.exports = router;
