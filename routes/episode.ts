@@ -18,20 +18,31 @@ router.get('/episode', async (req: Request, res: Response, next: NextFunction) =
 });
 
 router.post('/episode/new', async (req: Request, res: Response, next: NextFunction) => {
-  const seasonId = await getSeasonById({
-    seasonNumber: req.body.season_number
-  }, adminRequestHeaders);
+  const values = req.body
 
-  const data = await createEpisode({
-    episode:
-    {
-      season_id: seasonId.seasons[0].id,
-      episode_number: req.body.episode_number,
-      title: req.body.title,
-      description: req.body.description
+  try {
+    const seasonId = await getSeasonById({
+      seasonNumber: req.body.season_number
+    }, adminRequestHeaders);
+  
+    const data = await createEpisode({
+      episode:
+      {
+        season_id: seasonId.seasons[0].id,
+        episode_number: req.body.episode_number,
+        title: req.body.title,
+        description: req.body.description
+      }
+    }, adminRequestHeaders);
+    res.render('create-episode', { data })    
+  } catch {
+    if (values) {
+      res.render('create-episode', { values, message: 'There was a problem submitting your form, please try again.'});
+    } else {
+      res.render('error');
     }
-  }, adminRequestHeaders);
-  res.render('create-episode', { data })
+  }
+
 });
 
 module.exports = router;
