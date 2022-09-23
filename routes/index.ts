@@ -1,6 +1,9 @@
 import express, { NextFunction, Request, Response } from "express";
+import { createEpisode } from "../graphql/create-episode";
+import { getSeasonById } from "../graphql/get-season-id";
+import { adminRequestHeaders } from "../app";
 
-const router = express.Router();
+export const router = express.Router();
 
 /* GET home page. */
 router.get('/', function (req: Request, res: Response, next: NextFunction) {
@@ -27,6 +30,27 @@ router.get('/', function (req: Request, res: Response, next: NextFunction) {
     })).catch(next);
 
 });
+
+router.post('/episode/new', async (req: Request, res: Response, next: NextFunction) => {
+  const seasonId = await getSeasonById({
+    seasonNumber: req.body.season_number
+  }, adminRequestHeaders);
+
+  const data = await createEpisode({
+    episode:
+    {
+      season_id: seasonId.seasons[0].id,
+      episode_number: req.body.episode_number,
+      title: req.body.title,
+      description: req.body.description
+    }
+  }, adminRequestHeaders);
+  res.render('create-episode', { data })
+});
+
+router.get('/episode', async (req: Request, res: Response, next: NextFunction) => {
+  res.render('create-episode')
+})
 
 function getSeasonOrEpisode(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min) + min);

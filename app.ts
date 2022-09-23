@@ -3,8 +3,11 @@ import createError from "http-errors";
 import * as path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan"
+import { GraphQLClient } from "graphql-request";
+import invariant from 'tiny-invariant';
 
 // Set up the app
+require('dotenv').config();
 const indexRouter = require('./routes/index');
 const app = express();
 
@@ -17,9 +20,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-const webpHeaders = { setHeaders: function (res: any, path: any, stat: any) {
-  res.set("Accept", "image/avif,image/webp,image/*,*/*;q=0.8")
-}};
+// Set up GraphQL Client and Admin Access. There will not be user-specific data just yet so we will use admin credentials but can easily define creds on a per-request basis.
+const graphql = {
+  url: process.env.GRAPHQL_URL,
+  adminSecret: process.env.GRAPHQL_ADMIN_SECRET
+}
+
+invariant(graphql.url, 'GRAPHQL URL NOT SET!');
+export const gqlClient = new GraphQLClient(graphql.url);
+
+invariant(graphql.adminSecret, 'GRAPHQL SECRET NOT SET!');
+export const adminRequestHeaders = {
+  'Content-Type': 'application/json',
+  'x-hasura-admin-secret': graphql.adminSecret
+};
+
+const webpHeaders = {
+  setHeaders: function (res: any, path: any, stat: any) {
+    res.set("Accept", "image/avif,image/webp,image/*,*/*;q=0.8")
+  }
+};
 
 app.use(express.static(path.join(__dirname, 'public'), webpHeaders));
 

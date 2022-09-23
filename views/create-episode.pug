@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  form(action='/episode/new', method='POST')
+    p
+      | Season Number:
+      input(type='text', name='season_number', value='')
+      |          Episode Number: 
+      input(type='text', name='episode_number', value='')
+      |          Title: 
+      input(type='text', name='title', value='')
+      |          Description: 
+      input(type='text', name='description', value='')
+      input(type='submit', value='Submit')
+  #data
+    if data
+      .content ID: #{data.insert_episodes.returning[0].id} <br /> #{data.insert_episodes.returning[0].title}
