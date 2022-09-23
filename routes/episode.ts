@@ -18,20 +18,20 @@ router.get('/episode', async (req: Request, res: Response, next: NextFunction) =
 });
 
 router.post('/episode/new', async (req: Request, res: Response, next: NextFunction) => {
-    const seasonId = await getSeasonById({
-      seasonNumber: req.body.season_number
-    }, adminRequestHeaders);
+  const seasonId = await getSeasonById({
+    seasonNumber: req.body.season_number
+  }, adminRequestHeaders);
 
-    const data = await createEpisode({
-      episode:
-      {
-        season_id: seasonId.seasons[0].id,
-        episode_number: req.body.episode_number,
-        title: req.body.title,
-        description: req.body.description
-      }
-    }, adminRequestHeaders);
-    res.render('create-episode', { data })
-  });
+  const data = await createEpisode({
+    episode:
+    {
+      season_id: seasonId.seasons[0].id,
+      episode_number: req.body.episode_number,
+      title: req.body.title,
+      description: req.body.description
+    }
+  }, adminRequestHeaders);
+  res.render('create-episode', { data })
+});
 
-  module.exports = router;
+module.exports = router;
