@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import { createEpisode } from "../graphql/create-episode";
 import { getSeasonById } from "../graphql/get-season-id";
 import { adminRequestHeaders } from "../app";
+import invariant from "tiny-invariant";
 
 export const router = express.Router();
 
@@ -32,24 +33,36 @@ router.get('/', function (req: Request, res: Response, next: NextFunction) {
 });
 
 router.post('/episode/new', async (req: Request, res: Response, next: NextFunction) => {
-  const seasonId = await getSeasonById({
-    seasonNumber: req.body.season_number
-  }, adminRequestHeaders);
+  const token = process.env.AUTH_TOKEN
 
-  const data = await createEpisode({
-    episode:
-    {
-      season_id: seasonId.seasons[0].id,
-      episode_number: req.body.episode_number,
-      title: req.body.title,
-      description: req.body.description
-    }
-  }, adminRequestHeaders);
-  res.render('create-episode', { data })
+  invariant(token, "AUTH_TOKEN not set!")
+  if (req.headers.auth === token) {
+    const seasonId = await getSeasonById({
+      seasonNumber: req.body.season_number
+    }, adminRequestHeaders);
+
+    const data = await createEpisode({
+      episode:
+      {
+        season_id: seasonId.seasons[0].id,
+        episode_number: req.body.episode_number,
+        title: req.body.title,
+        description: req.body.description
+      }
+    }, adminRequestHeaders);
+    res.render('create-episode', { data })
+  }
+  res.render('error');
 });
 
 router.get('/episode', async (req: Request, res: Response, next: NextFunction) => {
-  res.render('create-episode')
+  const token = process.env.AUTH_TOKEN
+
+  invariant(token, "AUTH_TOKEN not set!")
+  if (req.headers.auth === token) {
+    res.render('create-episode')
+  }
+  res.render('error');
 })
 
 function getSeasonOrEpisode(min: number, max: number): number {
