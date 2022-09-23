@@ -68,17 +68,13 @@ router.get('/episode', async (req: Request, res: Response, next: NextFunction) =
   const token = process.env.AUTH_TOKEN
 
   invariant(token, "AUTH_TOKEN not set!")
-  if (req.headers.auth === token) {
+  if (req.query.auth === token) {
     res.render('create-episode')
   }
   res.render('error');
 });
 
 router.post('/episode/new', async (req: Request, res: Response, next: NextFunction) => {
-  const token = process.env.AUTH_TOKEN
-
-  invariant(token, "AUTH_TOKEN not set!")
-  if (req.headers.auth === token) {
     const seasonId = await getSeasonById({
       seasonNumber: req.body.season_number
     }, adminRequestHeaders);
@@ -93,9 +89,7 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
       }
     }, adminRequestHeaders);
     res.render('create-episode', { data })
-  }
-  res.render('error');
-});
+  });
 
 function getSeasonOrEpisode(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min) + min);
