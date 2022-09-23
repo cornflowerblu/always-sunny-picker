@@ -23,7 +23,7 @@ router.get('/', function (req: Request, res: Response, next: NextFunction) {
   const character = characters[random]
   Promise.resolve().then(() => res.render('index',
     {
-      title: "Always Sunny Episode Picker",
+      title: "Alway's Sunny Episode Picker",
       image: character.image,
       name: character.name,
       season: season,
