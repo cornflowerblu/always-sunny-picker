@@ -4,7 +4,7 @@ import { gql } from 'graphql-request'
 
 const query = gql`
 query ShowSeasons {
-  seasons(where: {season_number: {_lte: 3}}) {
+  seasons(where: {episodes: {_not: {id: {_is_null: true}}}}, order_by: {season_number: asc}) {
     season_number
     episodes_aggregate {
       aggregate {
