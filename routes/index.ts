@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import { getSeasonsEpisodeCount } from "../graphql/season-episode-counts";
 import { adminRequestHeaders } from "../app";
-import { characters } from '../public/constants/characters'
+import { characters } from '../constants/characters'
 import { getCharactersWithImages } from "../graphql/get-character-with-image";
 
 const router = express.Router();

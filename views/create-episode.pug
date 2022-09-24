@@ -19,13 +19,13 @@ block content
       form(action='/episode/new', method='POST')
         p
           | Season Number:
-          input(type='text', name='season_number', value= '', class='episodes')
+          input(type='text', name='season_number', value= '', required, class='episodes')
           | Episode Number: 
-          input(type='text', name='episode_number', value= '', class='episodes')
+          input(type='text', name='episode_number', value= '', required, class='episodes')
           | Title: 
-          input(type='text', name='title', value= '', class='episodes')
+          input(type='text', name='title', value= '', required, class='episodes')
           | Description: 
-          input(type='text', name='description', value= '', class='episodes')
+          input(type='text', name='description', value= '', required, class='episodes')
           input(type='submit', value='Submit', class='episodes')
   #data
     if data
