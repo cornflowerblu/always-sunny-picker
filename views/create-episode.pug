@@ -3,30 +3,40 @@ extends layout
 block content  
   #values
     if values
-      form(action='/episode/new', method='POST')
-        p
-          | Season Number:
-          input(type='text', name='season_number', value= values.season_number, class='episodes')
-          | Episode Number: 
-          input(type='text', name='episode_number', value= values.episode_number, class='episodes')
-          | Title: 
-          input(type='text', name='title', value= values.title, class='episodes')
-          | Description: 
-          input(type='text', name='description', value= values.description, class='episodes')
-          input(type='submit', value='Submit', class='episodes')
-        p(class='text-danger') #{message}
+      h1(class="display-6 pb-2") Episode Entry
+      form(action='/episode/new', method='POST' class='was-validated')
+        div(class='row')
+          div(class='form-group col-3 mb-3')
+            label Season Number
+            input(type='text', name='season_number', value= values.season_number, required, class='form-control border-secondary')
+          div(class='form-group col-3')
+            label Episode Number
+            input(type='text', name='episode_number', value= values.episode_number, required, class='form-control border-secondary')
+          div(class='form-group col')
+            label Title
+            input(type='text', name='title', value= values.title, required, class='form-control border-secondary')
+          div(class='form-group mb-3')
+            label Description
+            input(type='text', name='description', value= values.description, required, class='form-control border-secondary mb-3')
+            input(type='submit', value='Submit', class='btn btn-primary w-25 mb-3')
+            p(class='text-danger') #{message}
     else
-      form(action='/episode/new', method='POST')
-        p
-          | Season Number:
-          input(type='text', name='season_number', value= '', required, class='episodes')
-          | Episode Number: 
-          input(type='text', name='episode_number', value= '', required, class='episodes')
-          | Title: 
-          input(type='text', name='title', value= '', required, class='episodes')
-          | Description: 
-          input(type='text', name='description', value= '', required, class='episodes')
-          input(type='submit', value='Submit', class='episodes')
+      h1(class="display-6 pb-2") Episode Entry
+      form(action='/episode/new', method='POST' class='was-validated')
+        div(class='row')
+          div(class='form-group col-3 mb-3')
+            label Season Number
+            input(type='text', name='season_number', required, class='form-control border-secondary')
+          div(class='form-group col-3')
+            label Episode Number
+            input(type='text', name='episode_number', required, class='form-control border-secondary')
+          div(class='form-group col')
+            label Title
+            input(type='text', name='title', required, class='form-control border-secondary')
+          div(class='form-group mb-3')
+            label Description
+            input(type='text', name='description', required, class='form-control border-secondary mb-3')
+            input(type='submit', value='Submit', class='btn btn-primary w-25')
   #data
     if data
       .content 
