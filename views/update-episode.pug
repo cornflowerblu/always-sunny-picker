@@ -1,0 +1,38 @@
+extends layout
+
+block content
+  .container(class="w-50")
+    .row
+      .col
+        form(id="selectShow", method='POST')
+          select(id="showPicker", onChange=script)
+            if shows
+              each show in shows
+                option(value="") Select a Show 
+                option(value=show.id) #{show.show_name}
+            else
+              option(value=show.id) #{show.show_name}
+      .col
+        form(id="selectSeason", method='POST')
+          select(id="seasonPicker")
+            if seasons
+              each season in seasons
+                option(value=season.id) #{season.season_number}
+            else 
+              option(value="") Select a show to see seasons
+    script.
+      const selectShowForm = document.getElementById("selectShow");
+      
+      let showId;
+      let seasonId;
+
+      selectShowForm.addEventListener('change', (event) => {
+        showId = document.getElementById("showPicker").value;
+        seasonId = document.getElementById("seasonPicker").value;
+        selectShowForm.action = `/episode/edit/${showId}`;
+        selectShowForm.submit();
+      });
+
+
+      
+      
