@@ -39,9 +39,19 @@ block content
             input(type='submit', value='Submit', class='btn btn-primary w-25')
   #data
     if data
-      .content 
-        p| <strong>ID:</strong> #{data.insert_episodes.returning[0].id} 
-        p| <strong>Season:</strong> #{data.insert_episodes.returning[0].season.season_number}
-        p| <strong>Episode:</strong> #{data.insert_episodes.returning[0].episode_number}
-        p| <strong>Title:</strong> #{data.insert_episodes.returning[0].title}
-        p| <strong>Description:</strong> #{data.insert_episodes.returning[0].description}
+      .content
+        div(class="mt-4")
+        h2(class="display-6 pb-2" style="font-size: xx-large;") Episode Confirmation
+          div(class="row fs-4 shadow p-3 mt-3 mb-3 bg-body rounded") 
+            .row
+              ul(class="list-group list-group-flush")
+                li(class="list-group-item m-1")
+                  <strong>ID:</strong> #{data.insert_episodes.returning[0].id}
+                li(class="list-group-item m-1")
+                  <strong>Season:</strong> #{data.insert_episodes.returning[0].season.season_number}
+                li(class="list-group-item m-1")
+                  <strong>Episode:</strong> #{data.insert_episodes.returning[0].episode_number}          
+                li(class="list-group-item m-1")
+                  <strong>Title:</strong> #{data.insert_episodes.returning[0].title}
+                li(class="list-group-item m-1")
+                  <strong>Description:</strong> #{data.insert_episodes.returning[0].description}
