@@ -55,6 +55,7 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
   }
 });
 
+// This route presents a drop-down list of shows which populate seasons which populate episodes, eventually allowing for editing, filtering, etc.
 router.get('/episode/edit', async (req: Request, res: Response, next: NextFunction) => {
   invariant(token, "AUTH_TOKEN not set!")
   if (req.query.auth === token) {
@@ -65,6 +66,7 @@ router.get('/episode/edit', async (req: Request, res: Response, next: NextFuncti
   }
 });
 
+// This is the first ID that we pass back from the view which allows us to fetch the seasons associated with this show. The route is "all" because the view POSTS to it but a user may want to copy/paste the generated URL which requires a GET.
 router.all('/episode/edit/:showId', async (req: Request, res: Response, next: NextFunction) => {
   const singleShow = await getSingleShow({ id: req.params.showId }, adminRequestHeaders);
   const seasons = await getSeasons({ showId: req.params.showId }, adminRequestHeaders);
@@ -73,6 +75,7 @@ router.all('/episode/edit/:showId', async (req: Request, res: Response, next: Ne
   res.render('update-episode', showsAndSeasons);
 });
 
+// Moving down the chain, we now know the show and the season so we can fetch the episodes. 
 router.all('/episode/edit/:showId/:seasonId', async (req: Request, res: Response, next: NextFunction) => {
   const singleShow = await getSingleShow({ id: req.params.showId }, adminRequestHeaders);
   const singleSeason = await getSingleSeason({ id: req.params.seasonId }, adminRequestHeaders);

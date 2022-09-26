@@ -5,7 +5,7 @@ block content
     .row
       .col
         form(id="selectShow", method='POST')
-          select(id="showPicker", class="w-100", onChange=script)
+          select(id="showPicker", class="w-100")
             if shows
               each show in shows
                 option(value="") Select a Show 
