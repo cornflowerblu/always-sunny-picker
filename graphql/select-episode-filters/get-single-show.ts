@@ -18,7 +18,7 @@ type GetShowResponse = {
   shows_by_pk:
   {
     id: string,
-    season_number: number,
+    show_name: string,
   }
 }
 
