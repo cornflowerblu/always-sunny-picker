@@ -8,6 +8,7 @@ import { getSeasons } from "../graphql/select-episode/get-seasons";
 import { getSingleShow } from "../graphql/select-episode/get-single-show";
 import { getSingleSeason } from "../graphql/select-episode/get-single-season";
 import { getEpisodesBySeason } from "../graphql/select-episode/get-episodes-by-season";
+import { getSingleEpisode } from "../graphql/select-episode/get-single-episode";
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
@@ -90,6 +91,24 @@ router.all('/episode/edit/:showId/:seasonId', async (req: Request, res: Response
   }
 
   res.render('update-episode', showsAndSeasonsAndEpisodes);
+});
+
+router.all('/episode/edit/:showId/:seasonId/:episodeId', async (req: Request, res: Response, next: NextFunction) => {
+  const episode = await getSingleEpisode({ id: req.params.episodeId }, adminRequestHeaders);
+  const singleShow = await getSingleShow({ id: req.params.showId }, adminRequestHeaders);
+  const singleSeason = await getSingleSeason({ id: req.params.seasonId }, adminRequestHeaders);
+  const seasons = await getSeasons({ showId: req.params.showId }, adminRequestHeaders);
+  const episodes = await getEpisodesBySeason({ seasonId: req.params.seasonId }, adminRequestHeaders);
+
+  const showsAndSeasonsAndEpisodeDetails = {
+    seasons: seasons.seasons,
+    show: singleShow.shows_by_pk,
+    episodes: episodes.episodes,
+    singleSeason: singleSeason.seasons_by_pk,
+    singleEpisode: episode.episodes_by_pk
+  }
+
+  res.render('update-episode', showsAndSeasonsAndEpisodeDetails);
 });
 
 module.exports = router;

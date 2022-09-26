@@ -7,8 +7,8 @@ block content
         form(id="selectShow", method='POST')
           select(id="showPicker", class="w-100")
             if shows
+              option(value="") Select a Show               
               each show in shows
-                option(value="") Select a Show 
                 option(value=show.id) #{show.show_name}
             else
               option(value=show.id) #{show.show_name}
@@ -17,50 +17,62 @@ block content
           select(id="seasonPicker", class="w-100")
             if singleSeason
               each season in seasons
-                option(value=season.id) #{season.season_number}
-              option(value=singleSeason.id selected hidden) #{singleSeason.season_number}  
+                option(value=season.id) Season: #{season.season_number}
+              option(value=singleSeason.id selected hidden) Season: #{singleSeason.season_number}  
             else if seasons
-              each season in seasons
-                option(value=season.id) #{season.season_number}
+              option(value="") Select a Season
+              each season in seasons              
+                option(value=season.id) Season: #{season.season_number}
             else 
               option(value="") Select a show to see seasons
       .col
         form(id="selectEpisode", method='POST')
           select(id="episodePicker", class="w-100")
-            if episodes
+            if singleEpisode
               each episode in episodes
                 option(value=episode.id) Episode #{episode.episode_number + ": " + episode.title}
+              option(value=singleEpisode.id selected hidden) Episode #{singleEpisode.episode_number + ": " + singleEpisode.title}
+            else if episodes
+              option(value="") Select an Episode
+              each episode in episodes                
+                option(value=episode.id) Episode #{episode.episode_number + ": " + episode.title}
             else 
-              option(value="") Select a show to see episodes              
-    script.
-      const selectShowForm = document.getElementById("selectShow");
-      const selectSeasonForm = document.getElementById("selectSeason");
-      const selectEpisodeForm = document.getElementById("selectEpisode");
+              option(value="") Select a show to see episodes
+    .row.mt-3
+      .col
+        if singleEpisode 
+          p.lead <strong>Title:</strong> #{singleEpisode.title}
+          p.lead <strong>Description:</strong> #{singleEpisode.description}
 
-      let showId;
-      let seasonId;
-      let episodeId;
+  script.
+    const selectShowForm = document.getElementById("selectShow");
+    const selectSeasonForm = document.getElementById("selectSeason");
+    const selectEpisodeForm = document.getElementById("selectEpisode");
 
-      selectShowForm.addEventListener('change', (event) => {
-        showId = document.getElementById("showPicker").value;
-        selectShowForm.action = `/episode/edit/${showId}`;
-        selectShowForm.submit();
-      });
+    let showId;
+    let seasonId;
+    let episodeId;
 
-      selectSeasonForm.addEventListener('change', (event) => {
-        showId = document.getElementById("showPicker").value;
-        seasonId = document.getElementById("seasonPicker").value;
-        selectSeasonForm.action = `/episode/edit/${showId}/${seasonId}`;
-        selectSeasonForm.submit();
-      });
+    selectShowForm.addEventListener('change', (event) => {
+      showId = document.getElementById("showPicker").value;
+      selectShowForm.action = `/episode/edit/${showId}`;
+      selectShowForm.submit();
+    });
 
-      selectEpisodeForm.addEventListener('change', (event) => {
-        showId = document.getElementById("showPicker").value;
-        seasonId = document.getElementById("seasonPicker").value;
-        episodeId = document.getElementById("episodePicker").value;
-        selectEpisodeForm.action = `/episode/edit/${showId}/${seasonId}/${episodeId}`;
-        selectEpisodeForm.submit();
-      });
+    selectSeasonForm.addEventListener('change', (event) => {
+      showId = document.getElementById("showPicker").value;
+      seasonId = document.getElementById("seasonPicker").value;
+      selectSeasonForm.action = `/episode/edit/${showId}/${seasonId}`;
+      selectSeasonForm.submit();
+    });
+
+    selectEpisodeForm.addEventListener('change', (event) => {
+      showId = document.getElementById("showPicker").value;
+      seasonId = document.getElementById("seasonPicker").value;
+      episodeId = document.getElementById("episodePicker").value;
+      selectEpisodeForm.action = `/episode/edit/${showId}/${seasonId}/${episodeId}`;
+      selectEpisodeForm.submit();
+    });
 
 
       
