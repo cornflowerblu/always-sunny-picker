@@ -56,8 +56,13 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
 });
 
 router.get('/episode/edit', async (req: Request, res: Response, next: NextFunction) => {
-  const shows = await getShows({}, adminRequestHeaders);
-  res.render('update-episode', shows);
+  invariant(token, "AUTH_TOKEN not set!")
+  if (req.query.auth === token) {
+    const shows = await getShows({}, adminRequestHeaders);
+    res.render('update-episode', shows);
+  } else {
+    res.render('error');
+  }
 });
 
 router.all('/episode/edit/:showId', async (req: Request, res: Response, next: NextFunction) => {
