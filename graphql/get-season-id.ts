@@ -21,4 +21,5 @@ type GetSeasonIdByNumberResponse = {
   ]
 }
 
-export const getSeasonById = async (variables: GetSeasonIdByNumberInput, requestHeaders: {}) => <GetSeasonIdByNumberResponse> await gqlClient.request(query, variables, requestHeaders)
+export const getSeasonById = async (variables: GetSeasonIdByNumberInput, requestHeaders: {}) =>
+  <GetSeasonIdByNumberResponse>await gqlClient.request(query, variables, requestHeaders)

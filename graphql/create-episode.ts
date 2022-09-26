@@ -40,4 +40,5 @@ type AddEpisodeOutput = {
   }
 }
 
-export const createEpisode = async (variables: AddEpisodeInput, requestHeaders: {}) => <AddEpisodeOutput> await gqlClient.request(query, variables, requestHeaders)
+export const createEpisode = async (variables: AddEpisodeInput, requestHeaders: {}) =>
+  <AddEpisodeOutput>await gqlClient.request(query, variables, requestHeaders)

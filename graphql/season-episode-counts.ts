@@ -25,4 +25,5 @@ type ShowSeasonsOutput = {
   }]
 }
 
-export const getSeasonsEpisodeCount = async (variables: {}, requestHeaders: {}) => <ShowSeasonsOutput> await gqlClient.request(query, variables, requestHeaders)
+export const getSeasonsEpisodeCount = async (variables: {}, requestHeaders: {}) =>
+  <ShowSeasonsOutput>await gqlClient.request(query, variables, requestHeaders)

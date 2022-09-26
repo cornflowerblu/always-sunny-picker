@@ -23,5 +23,5 @@ type CharactersResponse = {
   ]
 }
 
-export const getCharactersWithImages = async (variables: CharactersInput, requestHeaders: {}) => 
-  <CharactersResponse> await gqlClient.request(query, variables, requestHeaders)
+export const getCharactersWithImages = async (variables: CharactersInput, requestHeaders: {}) =>
+  <CharactersResponse>await gqlClient.request(query, variables, requestHeaders)
