@@ -6,7 +6,7 @@ import { getCharactersWithImages } from "../graphql/get-character-with-image";
 
 const router = express.Router();
 
-// GET main shuffler which pulls from memory
+// The OG shuffler pulling from memory w/o all episodes because they vary per season
 router.get('/v1', (req: Request, res: Response, next: NextFunction) => {
   const season = getSeasonOrEpisode(1, 15);
   const episode = getSeasonOrEpisode(1, 10)
