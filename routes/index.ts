@@ -7,7 +7,7 @@ import { getCharactersWithImages } from "../graphql/get-character-with-image";
 const router = express.Router();
 
 // GET main shuffler which pulls from memory
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
+router.get('/v1', (req: Request, res: Response, next: NextFunction) => {
   const season = getSeasonOrEpisode(1, 15);
   const episode = getSeasonOrEpisode(1, 10)
 
@@ -25,8 +25,8 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
 
 });
 
-// v2 pulls all content from the db via GraphQL & Hasura
-router.get('/v2', async (req: Request, res: Response, next: NextFunction) => {
+// v2 pulls all content from the db via GraphQL & Hasura and is now the default index route
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   // The queries needed for this view
   const seasonEpisode = await getSeasonsEpisodeCount({}, adminRequestHeaders);
   const charactersWithImages = await getCharactersWithImages({ show: '950e38a3-3242-44dc-8585-fd30ced6627e' }, adminRequestHeaders)
