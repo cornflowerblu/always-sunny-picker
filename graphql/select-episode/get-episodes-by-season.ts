@@ -7,6 +7,7 @@ const query = gql`
     episodes(where: {season: {id: {_eq: $seasonId}}}, order_by: {episode_number: asc}) {
       id
       episode_number
+      title
     }
   }`
 
@@ -19,6 +20,7 @@ type GetEpisodeResponse = {
     {
       id: string,
       episode_number: number,
+      title: string,
     }
   ]
 }

@@ -6,6 +6,8 @@ import invariant from "tiny-invariant";
 import { getShows } from "../graphql/select-episode/get-shows";
 import { getSeasons } from "../graphql/select-episode/get-seasons";
 import { getSingleShow } from "../graphql/select-episode/get-single-show";
+import { getSingleSeason } from "../graphql/select-episode/get-single-season";
+import { getEpisodesBySeason } from "../graphql/select-episode/get-episodes-by-season";
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
@@ -64,6 +66,22 @@ router.all('/episode/edit/:showId', async (req: Request, res: Response, next: Ne
   const showsAndSeasons = { seasons: seasons.seasons, show: singleShow.shows_by_pk }
 
   res.render('update-episode', showsAndSeasons);
+});
+
+router.all('/episode/edit/:showId/:seasonId', async (req: Request, res: Response, next: NextFunction) => {
+  const singleShow = await getSingleShow({ id: req.params.showId }, adminRequestHeaders);
+  const singleSeason = await getSingleSeason({ id: req.params.seasonId }, adminRequestHeaders);
+  const seasons = await getSeasons({ showId: req.params.showId }, adminRequestHeaders);
+  const episodes = await getEpisodesBySeason({ seasonId: req.params.seasonId }, adminRequestHeaders);
+
+  const showsAndSeasonsAndEpisodes = {
+    seasons: seasons.seasons,
+    show: singleShow.shows_by_pk,
+    episodes: episodes.episodes,
+    singleSeason: singleSeason.seasons_by_pk
+  }
+
+  res.render('update-episode', showsAndSeasonsAndEpisodes);
 });
 
 module.exports = router;
