@@ -3,12 +3,12 @@ import { createEpisode } from "../graphql/create-episode";
 import { getSeasonById } from "../graphql/get-season-id";
 import { adminRequestHeaders } from "../app";
 import invariant from "tiny-invariant";
-import { getShows } from "../graphql/select-episode/get-shows";
-import { getSeasons } from "../graphql/select-episode/get-seasons";
-import { getSingleShow } from "../graphql/select-episode/get-single-show";
-import { getSingleSeason } from "../graphql/select-episode/get-single-season";
-import { getEpisodesBySeason } from "../graphql/select-episode/get-episodes-by-season";
-import { getSingleEpisode } from "../graphql/select-episode/get-single-episode";
+import { getShows } from "../graphql/select-episode-filters/get-shows";
+import { getSeasons } from "../graphql/select-episode-filters/get-seasons";
+import { getSingleShow } from "../graphql/select-episode-filters/get-single-show";
+import { getSingleSeason } from "../graphql/select-episode-filters/get-single-season";
+import { getEpisodesBySeason } from "../graphql/select-episode-filters/get-episodes-by-season";
+import { getSingleEpisode } from "../graphql/select-episode-filters/get-single-episode";
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
