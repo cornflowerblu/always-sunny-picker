@@ -21,8 +21,10 @@ block content
           select(id="seasonPicker", class="w-100")
             if singleSeason
               each season in seasons
-                option(value=season.id) Season: #{season.season_number}
-              option(value=singleSeason.id selected hidden) Season: #{singleSeason.season_number}  
+                if season.id === singleSeason.id
+                  option(value=season.id selected) Season: #{season.season_number}
+                else 
+                  option(value=season.id) Season: #{season.season_number}
             else if seasons
               option(value="") Select a Season
               each season in seasons              
@@ -34,8 +36,10 @@ block content
           select(id="episodePicker", class="w-100")
             if singleEpisode
               each episode in episodes
-                option(value=episode.id) Episode #{episode.episode_number + ": " + episode.title}
-              option(value=singleEpisode.id selected hidden) Episode #{singleEpisode.episode_number + ": " + singleEpisode.title}
+                if episode.id === singleEpisode.id
+                  option(value=episode.id selected) Episode #{episode.episode_number + ": " + episode.title}
+                else
+                  option(value=episode.id) Episode #{episode.episode_number + ": " + episode.title}
             else if episodes
               option(value="") Select an Episode
               each episode in episodes                

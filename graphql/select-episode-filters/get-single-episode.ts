@@ -5,6 +5,7 @@ import { gql } from 'graphql-request'
 const query = gql`
   query GetOneEpisode($id: uuid!) {
     episodes_by_pk(id: $id) {
+      id
       title
       description
       episode_number
@@ -18,6 +19,7 @@ type GetEpisodeInput = {
 type GetEpisodeResponse = {
   episodes_by_pk:
   {
+    id: string,
     title: string,
     description: string,
     episode_number: string,
