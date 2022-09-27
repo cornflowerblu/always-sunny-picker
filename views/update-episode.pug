@@ -46,36 +46,6 @@ block content
           p.lead <strong>Title:</strong> #{singleEpisode.title}
           p.lead <strong>Description:</strong> #{singleEpisode.description}
 
-  script.
-    const selectShowForm = document.getElementById("selectShow");
-    const selectSeasonForm = document.getElementById("selectSeason");
-    const selectEpisodeForm = document.getElementById("selectEpisode");
-
-    let showId;
-    let seasonId;
-    let episodeId;
-
-    selectShowForm.addEventListener('change', (event) => {
-      showId = document.getElementById("showPicker").value;
-      selectShowForm.action = `/episode/edit/${showId}`;
-      selectShowForm.submit();
-    });
-
-    selectSeasonForm.addEventListener('change', (event) => {
-      showId = document.getElementById("showPicker").value;
-      seasonId = document.getElementById("seasonPicker").value;
-      selectSeasonForm.action = `/episode/edit/${showId}/${seasonId}`;
-      selectSeasonForm.submit();
-    });
-
-    selectEpisodeForm.addEventListener('change', (event) => {
-      showId = document.getElementById("showPicker").value;
-      seasonId = document.getElementById("seasonPicker").value;
-      episodeId = document.getElementById("episodePicker").value;
-      selectEpisodeForm.action = `/episode/edit/${showId}/${seasonId}/${episodeId}`;
-      selectEpisodeForm.submit();
-    });
-
 
       
       
