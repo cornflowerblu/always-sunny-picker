@@ -29,61 +29,54 @@ router.get('/v1', (req: Request, res: Response, next: NextFunction) => {
 
 // v2 pulls all content from the db via GraphQL & Hasura and is now the default index route
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
-  // Check if they have a previous session and update their user in the DB
+  // Check if they have a previous session
   if (!req.signedCookies._session) {
-    // Set up a cookie for the session
+    // And if not set one up
     res.cookie(`_session`, {
       id: uuidv4(),
       time: Date.now(),
-      visits: 1
     },
       {
         secure: true,
         signed: true,
       });
-  } else {
-    res.cookie(`_session`, {
-      time: Date.now(),
-      visits: req.signedCookies._session.visits++
-    })
-  }
 
-  // The queries needed for this view
-  const seasonEpisode = await getSeasonsEpisodeCount({}, adminRequestHeaders);
-  const charactersWithImages = await getCharactersWithImages({ show: '950e38a3-3242-44dc-8585-fd30ced6627e' }, adminRequestHeaders)
+    // The queries needed for this view
+    const seasonEpisode = await getSeasonsEpisodeCount({}, adminRequestHeaders);
+    const charactersWithImages = await getCharactersWithImages({ show: '950e38a3-3242-44dc-8585-fd30ced6627e' }, adminRequestHeaders)
 
-  // Process the data
-  const item = seasonEpisode.seasons[Math.floor(Math.random() * seasonEpisode.seasons.length)];
-  const season = item.season_number
-  const episodeCount = item.episodes_aggregate.aggregate.count
-  const episode = getEpisode(episodeCount)
-  let random = Math.floor(Math.random() * charactersWithImages.characters.length);
-  const character = charactersWithImages.characters[random]
+    // Process the data
+    const item = seasonEpisode.seasons[Math.floor(Math.random() * seasonEpisode.seasons.length)];
+    const season = item.season_number
+    const episodeCount = item.episodes_aggregate.aggregate.count
+    const episode = getEpisode(episodeCount)
+    let random = Math.floor(Math.random() * charactersWithImages.characters.length);
+    const character = charactersWithImages.characters[random]
 
-  // Store the season / episode in the user's session as ints to make my queries easier
-  res.cookie('_recommendation', {
-    season: season,
-    episode: episode,
-    title: "Always Sunny Episode Picker",
-    image: character.image_url,
-    name: character.first_name,
-  },
-    {
-      secure: true,
-      signed: true,
-    });
-
-  // Render the view
-  Promise.resolve().then(() => res.render('index',
-    {
+    // Store the season / episode in the user's session as ints to make my queries easier
+    res.cookie('_recommendation', {
+      season: season,
+      episode: episode,
       title: "Always Sunny Episode Picker",
       image: character.image_url,
       name: character.first_name,
-      season: season,
-      episode: episode
-    })).catch(next);
-}
-);
+    },
+      {
+        secure: true,
+        signed: true,
+      });
+
+    // Render the view
+    Promise.resolve().then(() => res.render('index',
+      {
+        title: "Always Sunny Episode Picker",
+        image: character.image_url,
+        name: character.first_name,
+        season: season,
+        episode: episode
+      })).catch(next);
+  }
+});
 router.get('/details', async (req: Request, res: Response, next: NextFunction) => {
   const { season, episode, image, name } = await req.signedCookies._recommendation;
   const details = await getSeasonEpDetails({ season: season, episode: episode }, adminRequestHeaders);
