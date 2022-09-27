@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import logger from "morgan"
 import { GraphQLClient } from "graphql-request";
 import invariant from 'tiny-invariant';
-const MongoClient = require('mongodb').MongoClient
+
 
 // Set up the app
 require('dotenv').config();
@@ -31,16 +31,6 @@ const graphql = {
   url: process.env.GRAPHQL_URL,
   adminSecret: process.env.GRAPHQL_ADMIN_SECRET
 }
-
-// Set up MongoDB for session storage
-const connection = process.env.MONGO
-invariant(connection, "MONGODB URI NOT SET!")
-
-const client = MongoClient.connect(connection, async (err: any, client: { db: (arg0: string) => any; }) => {
-  if (err) throw err
-});
-
-export const db = client.db('always-sunny-picker')
 
 invariant(graphql.url, 'GRAPHQL URL NOT SET!');
 export const gqlClient = new GraphQLClient(graphql.url);
