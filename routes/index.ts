@@ -9,35 +9,35 @@ const MongoClient = require('mongodb').MongoClient
 import invariant from "tiny-invariant";
 
 const router = express.Router();
+// Set up MongoDB for session storage
+const connection = process.env.MONGO
+invariant(connection, "MONGODB URI NOT SET!")
 
-// The OG shuffler pulling from memory w/o all episodes because they vary per season
-router.get('/v1', (req: Request, res: Response, next: NextFunction) => {
-  const season = getSeasonOrEpisode(1, 15);
-  const episode = getSeasonOrEpisode(1, 10)
+MongoClient.connect(connection, async (err, client) => {
+  if (err) throw err
+  const db = client.db('always-sunny-picker')
 
-  let random = Math.floor(Math.random() * characters.length);
+  // The OG shuffler pulling from memory w/o all episodes because they vary per season
+  router.get('/v1', (req: Request, res: Response, next: NextFunction) => {
+    const season = getSeasonOrEpisode(1, 15);
+    const episode = getSeasonOrEpisode(1, 10)
 
-  const character = characters[random]
-  Promise.resolve().then(() => res.render('index',
-    {
-      title: "Always Sunny Episode Picker",
-      image: character.image,
-      name: character.name,
-      season: season,
-      episode: episode
-    })).catch(next);
+    let random = Math.floor(Math.random() * characters.length);
 
-});
+    const character = characters[random]
+    Promise.resolve().then(() => res.render('index',
+      {
+        title: "Always Sunny Episode Picker",
+        image: character.image,
+        name: character.name,
+        season: season,
+        episode: episode
+      })).catch(next);
 
-// v2 pulls all content from the db via GraphQL & Hasura and is now the default index route
-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
-  // Set up MongoDB for session storage
-  const connection = process.env.MONGO
-  invariant(connection, "MONGODB URI NOT SET!")
+  });
 
-  MongoClient.connect(connection, async (err, client) => {
-    if (err) throw err
-    const db = client.db('always-sunny-picker')
+  // v2 pulls all content from the db via GraphQL & Hasura and is now the default index route
+  router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 
     // Check if they have a previous session and update their user in the DB
@@ -70,44 +70,43 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         console.log(result)
       })
     };
-  });
 
-  // The queries needed for this view
-  const seasonEpisode = await getSeasonsEpisodeCount({}, adminRequestHeaders);
-  const charactersWithImages = await getCharactersWithImages({ show: '950e38a3-3242-44dc-8585-fd30ced6627e' }, adminRequestHeaders)
+    // The queries needed for this view
+    const seasonEpisode = await getSeasonsEpisodeCount({}, adminRequestHeaders);
+    const charactersWithImages = await getCharactersWithImages({ show: '950e38a3-3242-44dc-8585-fd30ced6627e' }, adminRequestHeaders)
 
-  // Process the data
-  const item = seasonEpisode.seasons[Math.floor(Math.random() * seasonEpisode.seasons.length)];
-  const season = item.season_number
-  const episodeCount = item.episodes_aggregate.aggregate.count
-  const episode = getEpisode(episodeCount)
-  let random = Math.floor(Math.random() * charactersWithImages.characters.length);
-  const character = charactersWithImages.characters[random]
+    // Process the data
+    const item = seasonEpisode.seasons[Math.floor(Math.random() * seasonEpisode.seasons.length)];
+    const season = item.season_number
+    const episodeCount = item.episodes_aggregate.aggregate.count
+    const episode = getEpisode(episodeCount)
+    let random = Math.floor(Math.random() * charactersWithImages.characters.length);
+    const character = charactersWithImages.characters[random]
 
-  // Store the season / episode in the user's session as ints to make my queries easier
-  res.cookie('_recommendation', {
-    season: season,
-    episode: episode,
-    title: "Always Sunny Episode Picker",
-    image: character.image_url,
-    name: character.first_name,
-  },
-    {
-      secure: true,
-      signed: true,
-    });
-
-  // Render the view
-  Promise.resolve().then(() => res.render('index',
-    {
+    // Store the season / episode in the user's session as ints to make my queries easier
+    res.cookie('_recommendation', {
+      season: season,
+      episode: episode,
       title: "Always Sunny Episode Picker",
       image: character.image_url,
       name: character.first_name,
-      season: season,
-      episode: episode
-    })).catch(next);
-});
+    },
+      {
+        secure: true,
+        signed: true,
+      });
 
+    // Render the view
+    Promise.resolve().then(() => res.render('index',
+      {
+        title: "Always Sunny Episode Picker",
+        image: character.image_url,
+        name: character.first_name,
+        season: season,
+        episode: episode
+      })).catch(next);
+  });
+});
 router.get('/details', async (req: Request, res: Response, next: NextFunction) => {
   const { season, episode, image, name } = await req.signedCookies._recommendation;
   const details = await getSeasonEpDetails({ season: season, episode: episode }, adminRequestHeaders);
