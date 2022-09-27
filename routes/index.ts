@@ -40,42 +40,41 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         secure: true,
         signed: true,
       });
+  }
+  // The queries needed for this view
+  const seasonEpisode = await getSeasonsEpisodeCount({}, adminRequestHeaders);
+  const charactersWithImages = await getCharactersWithImages({ show: '950e38a3-3242-44dc-8585-fd30ced6627e' }, adminRequestHeaders)
 
-    // The queries needed for this view
-    const seasonEpisode = await getSeasonsEpisodeCount({}, adminRequestHeaders);
-    const charactersWithImages = await getCharactersWithImages({ show: '950e38a3-3242-44dc-8585-fd30ced6627e' }, adminRequestHeaders)
+  // Process the data
+  const item = seasonEpisode.seasons[Math.floor(Math.random() * seasonEpisode.seasons.length)];
+  const season = item.season_number
+  const episodeCount = item.episodes_aggregate.aggregate.count
+  const episode = getEpisode(episodeCount)
+  let random = Math.floor(Math.random() * charactersWithImages.characters.length);
+  const character = charactersWithImages.characters[random]
 
-    // Process the data
-    const item = seasonEpisode.seasons[Math.floor(Math.random() * seasonEpisode.seasons.length)];
-    const season = item.season_number
-    const episodeCount = item.episodes_aggregate.aggregate.count
-    const episode = getEpisode(episodeCount)
-    let random = Math.floor(Math.random() * charactersWithImages.characters.length);
-    const character = charactersWithImages.characters[random]
+  // Store the season / episode in the user's session as ints to make my queries easier
+  res.cookie('_recommendation', {
+    season: season,
+    episode: episode,
+    title: "Always Sunny Episode Picker",
+    image: character.image_url,
+    name: character.first_name,
+  },
+    {
+      secure: true,
+      signed: true,
+    });
 
-    // Store the season / episode in the user's session as ints to make my queries easier
-    res.cookie('_recommendation', {
-      season: season,
-      episode: episode,
+  // Render the view
+  Promise.resolve().then(() => res.render('index',
+    {
       title: "Always Sunny Episode Picker",
       image: character.image_url,
       name: character.first_name,
-    },
-      {
-        secure: true,
-        signed: true,
-      });
-
-    // Render the view
-    Promise.resolve().then(() => res.render('index',
-      {
-        title: "Always Sunny Episode Picker",
-        image: character.image_url,
-        name: character.first_name,
-        season: season,
-        episode: episode
-      })).catch(next);
-  }
+      season: season,
+      episode: episode
+    })).catch(next);
 });
 router.get('/details', async (req: Request, res: Response, next: NextFunction) => {
   const { season, episode, image, name } = await req.signedCookies._recommendation;
