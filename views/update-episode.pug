@@ -8,8 +8,10 @@ block content
           select(id="showPicker", class="w-100")
             if singleShow
               each show in shows
-                option(value=show.id) #{show.show_name}
-              option(value=singleShow.id selected hidden) #{singleShow.show_name}
+                if show.id === singleShow.id
+                  option(value=show.id selected) #{show.show_name}              
+                else
+                  option(value=show.id) #{show.show_name}
             else if shows
               option(value="") Select a Show               
               each show in shows
