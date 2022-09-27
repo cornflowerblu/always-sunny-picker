@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import logger from "morgan"
 import { GraphQLClient } from "graphql-request";
 import invariant from 'tiny-invariant';
+const MongoClient = require('mongodb').MongoClient
 
 // Set up the app
 require('dotenv').config();
@@ -19,13 +20,27 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser("SDKJHFSKJDFHSKJDFHKSJHFKSDJHFKSJHFKJDSHF"));
+
+
+const cookieSecret = process.env.COOKIE_SECRET
+invariant(cookieSecret, "COOKIE PARSER SECRET NOT SET!")
+app.use(cookieParser(cookieSecret));
 
 // Set up GraphQL Client and Admin Access. There will not be user-specific data just yet so we will use admin credentials but can easily define creds on a per-request basis.
 const graphql = {
   url: process.env.GRAPHQL_URL,
   adminSecret: process.env.GRAPHQL_ADMIN_SECRET
 }
+
+// Set up MongoDB for session storage
+const connection = process.env.MONGO
+invariant(connection, "MONGODB URI NOT SET!")
+
+const client = MongoClient.connect(connection, async (err: any, client: { db: (arg0: string) => any; }) => {
+  if (err) throw err
+});
+
+export const db = client.db('always-sunny-picker')
 
 invariant(graphql.url, 'GRAPHQL URL NOT SET!');
 export const gqlClient = new GraphQLClient(graphql.url);

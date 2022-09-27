@@ -4,6 +4,8 @@ import { adminRequestHeaders } from "../app";
 import { characters } from '../constants/characters'
 import { getCharactersWithImages } from "../graphql/get-character-with-image";
 import { getSeasonEpDetails } from "../graphql/get-season-episode-details";
+import { v4 as uuidv4 } from 'uuid';
+import { db } from "../app";
 
 const router = express.Router();
 
@@ -28,6 +30,38 @@ router.get('/v1', (req: Request, res: Response, next: NextFunction) => {
 
 // v2 pulls all content from the db via GraphQL & Hasura and is now the default index route
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+
+  // Check if they have a previous session and update their user in the DB
+  if (req.signedCookies._session) {
+    const localUser = req.signedCookies._session.id
+    const dbUser = await db.collection('sessions').findOne({ "user.id": { $eq: localUser } })
+    if (localUser === dbUser.user.id) {
+      db.collection('sessions').findOneAndUpdate(
+        { "user.id": { $eq: localUser } },
+        { $set: { "user.time": Date.now() }, $inc: { "user.visits": + 1 } },
+        { upsert: false, returnNewDocument: true }
+      );
+    }
+  } else {
+
+    // Set up a cookie for the session
+    res.cookie(`_session`, {
+      id: uuidv4(),
+      time: Date.now(),
+      visits: +1
+    },
+      {
+        secure: true,
+        signed: true,
+      });
+
+    // Throw em in the db for persistence
+    db.collection('sessions').insert({ user: req.signedCookies._session }, (err: any, result: any) => {
+      if (err) throw err
+      console.log(result)
+    })
+  };
+
   // The queries needed for this view
   const seasonEpisode = await getSeasonsEpisodeCount({}, adminRequestHeaders);
   const charactersWithImages = await getCharactersWithImages({ show: '950e38a3-3242-44dc-8585-fd30ced6627e' }, adminRequestHeaders)
