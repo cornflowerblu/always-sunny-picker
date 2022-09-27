@@ -11,6 +11,6 @@ block content
         a(href="/" class="btn btn-primary btn-lg w-50 mt-3 me-2") Shuffle
         a(href="/details" class="btn btn-outline-primary btn-lg w-50 mt-3 ms-2") Details
       .d-flex.flex-row.mt-3
-      if episodeTitle
-        p #{episodeTitle}
-        p #{episodeDescription}
+      if details
+        p #{details.title}
+        p #{details.description}

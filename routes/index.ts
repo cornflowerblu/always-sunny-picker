@@ -42,16 +42,16 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
   // Store the season / episode in the user's session as ints to make my queries easier
   res.cookie('_recommendation', {
-    season: season, 
-    episode: episode, 
+    season: season,
+    episode: episode,
     title: "Always Sunny Episode Picker",
     image: character.image_url,
     name: character.first_name,
-    }, 
+  },
     {
       secure: true,
       signed: true,
-  });
+    });
 
   // Render the view
   Promise.resolve().then(() => res.render('index',
@@ -65,22 +65,21 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.get('/details', async (req: Request, res: Response, next: NextFunction) => {
-  const {season, episode, image, name} = await req.signedCookies._recommendation;
-  const details = await getSeasonEpDetails({season: season, episode: episode}, adminRequestHeaders);
+  const { season, episode, image, name } = await req.signedCookies._recommendation;
+  const details = await getSeasonEpDetails({ season: season, episode: episode }, adminRequestHeaders);
 
   const episodeDetails = {
     title: details.episodes[0].title,
     description: details.episodes[0].description,
   }
 
-  Promise.resolve().then(() =>res.render('index', {
-      title: "Always Sunny Episode Picker",
-      image: image,
-      name: name,
-      season: season,
-      episode: episode,
-    episodeTitle: episodeDetails.title,
-    episodeDescription: episodeDetails.description
+  Promise.resolve().then(() => res.render('index', {
+    title: "Always Sunny Episode Picker",
+    image: image,
+    name: name,
+    season: season,
+    episode: episode,
+    details: episodeDetails
   })).catch(next);
 });
 
