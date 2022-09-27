@@ -6,7 +6,7 @@ block entry_form
         div(class='row')
           div(class='form-group col-3 mb-3')
             label Season Number
-            input(type='text', name='season_number', value= values.season_number, required, class='form-control border-secondary')
+            input(type='text', id='season_number', name='season_number', value= (values.season_number ? values.season_number : values.season.season_number) required, class='form-control border-secondary')
           div(class='form-group col-3')
             label Episode Number
             input(type='text', name='episode_number', value= values.episode_number, required, class='form-control border-secondary')

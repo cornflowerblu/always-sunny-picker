@@ -48,8 +48,11 @@ block content
               option(value="") Select a show to see episodes
     .row.mt-3
       .col
-        if singleEpisode 
-          p.lead <strong>Title:</strong> #{singleEpisode.title}
-          p.lead <strong>Description:</strong> #{singleEpisode.description}
+        - const values = singleEpisode
+          if !values
+            include ./partials/entry-form
+                
+              
+              
   
   script(src='https://cdn.rurich.dev/form-handler.js')
