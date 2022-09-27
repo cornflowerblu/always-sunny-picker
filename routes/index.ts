@@ -3,6 +3,7 @@ import { getSeasonsEpisodeCount } from "../graphql/season-episode-counts";
 import { adminRequestHeaders } from "../app";
 import { characters } from '../constants/characters'
 import { getCharactersWithImages } from "../graphql/get-character-with-image";
+import { getSeasonEpDetails } from "../graphql/get-season-episode-details";
 
 const router = express.Router();
 
@@ -39,6 +40,19 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   let random = Math.floor(Math.random() * charactersWithImages.characters.length);
   const character = charactersWithImages.characters[random]
 
+  // Store the season / episode in the user's session as ints to make my queries easier
+  res.cookie('_recommendation', {
+    season: season, 
+    episode: episode, 
+    title: "Always Sunny Episode Picker",
+    image: character.image_url,
+    name: character.first_name,
+    }, 
+    {
+      secure: true,
+      signed: true,
+  });
+
   // Render the view
   Promise.resolve().then(() => res.render('index',
     {
@@ -48,8 +62,28 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       season: season,
       episode: episode
     })).catch(next);
-
 });
+
+router.get('/details', async (req: Request, res: Response, next: NextFunction) => {
+  const {season, episode, image, name} = await req.signedCookies._recommendation;
+  const details = await getSeasonEpDetails({season: season, episode: episode}, adminRequestHeaders);
+
+  const episodeDetails = {
+    title: details.episodes[0].title,
+    description: details.episodes[0].description,
+  }
+
+  Promise.resolve().then(() =>res.render('index', {
+      title: "Always Sunny Episode Picker",
+      image: image,
+      name: name,
+      season: season,
+      episode: episode,
+    episodeTitle: episodeDetails.title,
+    episodeDescription: episodeDetails.description
+  })).catch(next);
+});
+
 
 // Functions leveraged in the controllers above
 function getSeasonOrEpisode(min: number, max: number): number {

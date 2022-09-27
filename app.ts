@@ -19,7 +19,7 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser("SDKJHFSKJDFHSKJDFHKSJHFKSDJHFKSJHFKJDSHF"));
 
 // Set up GraphQL Client and Admin Access. There will not be user-specific data just yet so we will use admin credentials but can easily define creds on a per-request basis.
 const graphql = {
