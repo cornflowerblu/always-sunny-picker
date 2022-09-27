@@ -6,12 +6,14 @@ block content
       .col
         form(id="selectShow", method='POST')
           select(id="showPicker", class="w-100")
-            if shows
+            if singleShow
+              each show in shows
+                option(value=show.id) #{show.show_name}
+              option(value=singleShow.id selected hidden) #{singleShow.show_name}
+            else if shows
               option(value="") Select a Show               
               each show in shows
                 option(value=show.id) #{show.show_name}
-            else
-              option(value=show.id) #{show.show_name}
       .col
         form(id="selectSeason", method='POST')
           select(id="seasonPicker", class="w-100")

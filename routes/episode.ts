@@ -69,9 +69,14 @@ router.get('/episode/edit', async (req: Request, res: Response, next: NextFuncti
 
 // This is the first ID that we pass back from the view which allows us to fetch the seasons associated with this show. The route is "all" because the view POSTS to it but a user may want to copy/paste the generated URL which requires a GET.
 router.all('/episode/edit/:showId', async (req: Request, res: Response, next: NextFunction) => {
+  const shows = await getShows({}, adminRequestHeaders);
   const singleShow = await getSingleShow({ id: req.params.showId }, adminRequestHeaders);
   const seasons = await getSeasons({ showId: req.params.showId }, adminRequestHeaders);
-  const showsAndSeasons = { seasons: seasons.seasons, show: singleShow.shows_by_pk }
+  const showsAndSeasons = {
+    seasons: seasons.seasons,
+    singleShow: singleShow.shows_by_pk,
+    shows: shows.shows
+  }
 
   res.render('update-episode', showsAndSeasons);
 });
@@ -80,14 +85,16 @@ router.all('/episode/edit/:showId', async (req: Request, res: Response, next: Ne
 router.all('/episode/edit/:showId/:seasonId', async (req: Request, res: Response, next: NextFunction) => {
   const singleShow = await getSingleShow({ id: req.params.showId }, adminRequestHeaders);
   const singleSeason = await getSingleSeason({ id: req.params.seasonId }, adminRequestHeaders);
+  const shows = await getShows({}, adminRequestHeaders);
   const seasons = await getSeasons({ showId: req.params.showId }, adminRequestHeaders);
   const episodes = await getEpisodesBySeason({ seasonId: req.params.seasonId }, adminRequestHeaders);
 
   const showsAndSeasonsAndEpisodes = {
     seasons: seasons.seasons,
-    show: singleShow.shows_by_pk,
+    singleShow: singleShow.shows_by_pk,
     episodes: episodes.episodes,
-    singleSeason: singleSeason.seasons_by_pk
+    singleSeason: singleSeason.seasons_by_pk,
+    shows: shows.shows
   }
 
   res.render('update-episode', showsAndSeasonsAndEpisodes);
@@ -97,15 +104,17 @@ router.all('/episode/edit/:showId/:seasonId/:episodeId', async (req: Request, re
   const episode = await getSingleEpisode({ id: req.params.episodeId }, adminRequestHeaders);
   const singleShow = await getSingleShow({ id: req.params.showId }, adminRequestHeaders);
   const singleSeason = await getSingleSeason({ id: req.params.seasonId }, adminRequestHeaders);
+  const shows = await getShows({}, adminRequestHeaders);
   const seasons = await getSeasons({ showId: req.params.showId }, adminRequestHeaders);
   const episodes = await getEpisodesBySeason({ seasonId: req.params.seasonId }, adminRequestHeaders);
 
   const showsAndSeasonsAndEpisodeDetails = {
     seasons: seasons.seasons,
-    show: singleShow.shows_by_pk,
+    singleShow: singleShow.shows_by_pk,
     episodes: episodes.episodes,
     singleSeason: singleSeason.seasons_by_pk,
-    singleEpisode: episode.episodes_by_pk
+    singleEpisode: episode.episodes_by_pk,
+    shows: shows.shows
   }
 
   res.render('update-episode', showsAndSeasonsAndEpisodeDetails);
