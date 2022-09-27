@@ -2,10 +2,11 @@ extends layout
 
 block content
   .container-fluid
-    .row
+    .row.pb-4
+      h1(class="display-6 fs-1") Pick an Episode to Edit
       .col
         form(id="selectShow", method='POST')
-          select(id="showPicker", class="w-100")
+          select(id="showPicker", class="form-select w-100")
             if singleShow
               each show in shows
                 if show.id === singleShow.id
@@ -18,7 +19,7 @@ block content
                 option(value=show.id) #{show.show_name}
       .col
         form(id="selectSeason", method='POST')
-          select(id="seasonPicker", class="w-100")
+          select(id="seasonPicker", class="form-select w-100")
             if singleSeason
               each season in seasons
                 if season.id === singleSeason.id
@@ -33,7 +34,7 @@ block content
               option(value="") Select a show to see seasons
       .col
         form(id="selectEpisode", method='POST')
-          select(id="episodePicker", class="w-100")
+          select(id="episodePicker", class="form-select w-100")
             if singleEpisode
               each episode in episodes
                 if episode.id === singleEpisode.id
@@ -46,11 +47,17 @@ block content
                 option(value=episode.id) Episode #{episode.episode_number + ": " + episode.title}
             else 
               option(value="") Select a show to see episodes
-    .row.mt-3
-      .col
+    .row
         - const values = singleEpisode
-          if !values
-            include ./partials/entry-form
+          if values
+            block content
+              div(class='form-group pb-4')
+                h2(class="display-6 fs-2")
+                  label Episode ID
+                input(class='form-control', type='text', name='id', id='id', value= values.id, readonly disabled style="cursor: not-allowed;")
+              include ./partials/entry-form
+          else if !values
+            block entry_form
                 
               
               

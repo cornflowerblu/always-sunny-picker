@@ -27,3 +27,11 @@ img {
   margin-left: (1rem * .25);
   margin-right: 1rem;
 }
+
+div #values {
+  margin: top 6rem;
+}
+
+div #values h1 {
+  font-size: 2rem;
+}

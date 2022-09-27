@@ -44,12 +44,12 @@ block entry_form
             .row
               ul(class="list-group list-group-flush")
                 li(class="list-group-item m-1")
-                  <strong>ID:</strong> #{data.insert_episodes.returning[0].id}
+                  <strong>ID:</strong> #{data.update_episodes_by_pk ? data.update_episodes_by_pk.id : data.insert_episodes.returning[0].id}
                 li(class="list-group-item m-1")
-                  <strong>Season:</strong> #{data.insert_episodes.returning[0].season.season_number}
+                  <strong>Season:</strong> #{data.update_episodes_by_pk ? data.update_episodes_by_pk.season.season_number : data.insert_episodes.returning[0].season.season_number}
                 li(class="list-group-item m-1")
-                  <strong>Episode:</strong> #{data.insert_episodes.returning[0].episode_number}          
+                  <strong>Episode:</strong> #{data.update_episodes_by_pk ? data.update_episodes_by_pk.episode_number : data.insert_episodes.returning[0].episode_number}          
                 li(class="list-group-item m-1")
-                  <strong>Title:</strong> #{data.insert_episodes.returning[0].title}
+                  <strong>Title:</strong> #{data.update_episodes_by_pk ? data.update_episodes_by_pk.title : data.insert_episodes.returning[0].title}
                 li(class="list-group-item m-1")
-                  <strong>Description:</strong> #{data.insert_episodes.returning[0].description}
+                  <strong>Description:</strong> #{data.update_episodes_by_pk ? data.update_episodes_by_pk.description : data.insert_episodes.returning[0].description}
