@@ -67,7 +67,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       signed: true,
     });
 
-
+  await client.connect();
   await client.publish('channel', JSON.stringify(req.signedCookies._sunnysession));
 
   res.render('index',
