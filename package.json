@@ -17,6 +17,7 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "pug": "2.0.0-beta11",
+    "redis": "^4.3.1",
     "tiny-invariant": "^1.2.0",
     "uuid": "^9.0.0"
   },

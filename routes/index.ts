@@ -5,8 +5,14 @@ import { characters } from '../constants/characters'
 import { getCharactersWithImages } from "../graphql/get-character-with-image";
 import { getSeasonEpDetails } from "../graphql/get-season-episode-details";
 import { v4 as uuidv4 } from 'uuid';
+import { createClient } from 'redis';
 
 const router = express.Router();
+
+// Set up Redis
+const redisClient = createClient({
+  url: process.env.STACKHERO_REDIS_URL
+});
 
 // The OG shuffler pulling from memory w/o all episodes because they vary per season
 router.get('/v1', (req: Request, res: Response, next: NextFunction) => {
@@ -45,7 +51,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   // Set up the session variables to store the season / episode in the user's session as ints to make my queries easier
   let returningId;
   let newId;
-  
+
   // Render the view
   Promise.resolve().then(() => {
     if (req.signedCookies._sunnysession) {
@@ -53,7 +59,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     } else {
       newId = uuidv4();
     }
-    
+
     res.cookie('_sunnysession', {
       id: newId ? newId : returningId,
       time: Date.now(),
@@ -67,15 +73,26 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         secure: true,
         signed: true,
       });
-  }).then(() => res.render('index',
-  {
-    title: "Always Sunny Episode Picker",
-    image: character.image_url,
-    name: character.first_name,
-    season: season,
-    episode: episode
-  })).catch(next);
-});
+  }).then( async () => {
+    console.log('render time')
+    res.render('index',
+      {
+        title: "Always Sunny Episode Picker",
+        image: character.image_url,
+        name: character.first_name,
+        season: season,
+        episode: episode
+      });
+      console.log('redis time')
+        try {
+          await redisClient.connect();
+          await redisClient.LPUSH('user:queue:id', JSON.stringify(req.signedCookies._sunnysession));
+        } catch (error) {
+          console.error(error);
+        }
+        await redisClient.disconnect();
+      });
+  });
 
 router.get('/details', async (req: Request, res: Response, next: NextFunction) => {
   const { season, episode, image, name } = await req.signedCookies._sunnysession;

@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import logger from "morgan"
 import { GraphQLClient } from "graphql-request";
 import invariant from 'tiny-invariant';
-
+import { createClient } from 'redis';
 
 
 // Set up the app
@@ -21,7 +21,6 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 
 const cookieSecret = process.env.COOKIE_SECRET
 invariant(cookieSecret, "COOKIE PARSER SECRET NOT SET!")
