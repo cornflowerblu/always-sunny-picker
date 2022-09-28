@@ -32,7 +32,7 @@ const graphql = {
   adminSecret: process.env.GRAPHQL_ADMIN_SECRET
 }
 
-export const redisSecret = process.env.STACKHERO_REDIS_URL
+export const redisSecret = process.env.STACKHERO_REDIS_URL_TLS
 invariant(redisSecret, "REDIS URL NOT SET!")
 export const client = createClient({ url: redisSecret });
 
