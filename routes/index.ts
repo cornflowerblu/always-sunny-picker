@@ -5,7 +5,7 @@ import { characters } from '../constants/characters'
 import { getCharactersWithImages } from "../graphql/get-character-with-image";
 import { getSeasonEpDetails } from "../graphql/get-season-episode-details";
 import { v4 as uuidv4 } from 'uuid';
-import { client } from "../app";
+// import { client } from "../app";
 
 const router = express.Router();
 
@@ -67,8 +67,8 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       signed: true,
     });
 
-  await client.connect();
-  await client.publish('channel', JSON.stringify(req.signedCookies._sunnysession));
+  // await client.connect();
+  // await client.publish('channel', JSON.stringify(req.signedCookies._sunnysession));
 
   res.render('index',
     {
