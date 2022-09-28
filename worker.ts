@@ -6,7 +6,7 @@ const WEB_SOCKET_PORT = 8000
 
 async function BackgroundSessionWork(msg?: string) {
 
-  const client = createClient({ url: process.env.STACKHERO_REDIS_URL_TLS })
+  const client = createClient({ url: process.env.REDIS_URL })
   await client.connect();
 
   const subscriber = client.duplicate();
