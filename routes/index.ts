@@ -5,14 +5,9 @@ import { characters } from '../constants/characters'
 import { getCharactersWithImages } from "../graphql/get-character-with-image";
 import { getSeasonEpDetails } from "../graphql/get-season-episode-details";
 import { v4 as uuidv4 } from 'uuid';
-import { createClient } from 'redis';
+import { redisClient } from '../app'
 
 const router = express.Router();
-
-// Set up Redis
-const redisClient = createClient({
-  url: process.env.STACKHERO_REDIS_URL_TLS
-});
 
 // The OG shuffler pulling from memory w/o all episodes because they vary per season
 router.get('/v1', (req: Request, res: Response, next: NextFunction) => {
@@ -62,7 +57,6 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
     res.cookie('_sunnysession', {
       id: newId ? newId : returningId,
-      time: Date.now(),
       season: season,
       episode: episode,
       title: "Always Sunny Episode Picker",

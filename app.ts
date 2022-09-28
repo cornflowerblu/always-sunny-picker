@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import logger from "morgan"
 import { GraphQLClient } from "graphql-request";
 import invariant from 'tiny-invariant';
-import { createClient } from 'redis';
+import { createClient } from "redis";
 
 
 // Set up the app
@@ -31,6 +31,11 @@ const graphql = {
   url: process.env.GRAPHQL_URL,
   adminSecret: process.env.GRAPHQL_ADMIN_SECRET
 }
+
+// Set up Redis Client
+export const redisClient = createClient({
+  url: process.env.STACKHERO_REDIS_URL_TLS
+});
 
 invariant(graphql.url, 'GRAPHQL URL NOT SET!');
 export const gqlClient = new GraphQLClient(graphql.url);
