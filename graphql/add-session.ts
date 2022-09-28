@@ -21,18 +21,18 @@ type AddSessionInput = {
     episode: number,
     name: string,
     created_at?: Date,
-    updated_at?: Date, 
+    updated_at?: Date,
   }
 }
 
 type AddSessionOutput = {
   insert_sessions_one: {
     "id": string,
-      "season": number,
-      "episode": number,
-      "name": string,
-      "created_at": Date,
-      "updated_at": Date
+    "season": number,
+    "episode": number,
+    "name": string,
+    "created_at": Date,
+    "updated_at": Date
   }
 }
 
