@@ -11,7 +11,7 @@ const router = express.Router();
 
 // Set up Redis
 const redisClient = createClient({
-  url: process.env.STACKHERO_REDIS_URL
+  url: process.env.STACKHERO_REDIS_URL_TLS
 });
 
 // The OG shuffler pulling from memory w/o all episodes because they vary per season
