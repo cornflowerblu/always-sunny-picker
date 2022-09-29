@@ -19,16 +19,12 @@ export async function redisEnv(): Promise<Redis> {
     });
   } else {
     // Production connection
-    return redis = new Redis({
-      port: Number(redis_uri.port) + 1,
-      host: redis_uri.hostname || '',
-      password: redis_uri.auth?.split(':')[1],
+    return redis = new Redis(process.env.REDIS_URL || '', {
       db: 0,
       tls: {
         rejectUnauthorized: true,
         requestCert: true,
       },
-      timeout: 0,
       retryStrategy(times: number): number {
         const delay = Math.min(times * 10, 1000);
         return delay;
