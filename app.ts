@@ -5,7 +5,8 @@ import cookieParser from "cookie-parser";
 import logger from "morgan"
 import { GraphQLClient } from "graphql-request";
 import invariant from 'tiny-invariant';
-import { createClient } from "redis";
+import { parse } from "url";
+import Redis from 'ioredis';
 
 
 // Set up the app
@@ -14,17 +15,24 @@ const indexRouter = require('./routes/index');
 const episodeRouter = require('./routes/episode')
 const app = express();
 
-// view engine setup
+// Wiew engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+// Plugins
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Cookies!
 const cookieSecret = process.env.COOKIE_SECRET
 invariant(cookieSecret, "COOKIE PARSER SECRET NOT SET!")
 app.use(cookieParser(cookieSecret));
+
+// Redis Variables
+const REDIS_URL = process.env.REDIS_URL
+invariant(REDIS_URL, "REDIS URL NOT SET!")
+
 
 // Set up GraphQL Client and Admin Access. There will not be user-specific data just yet so we will use admin credentials but can easily define creds on a per-request basis.
 const graphql = {
@@ -77,7 +85,7 @@ app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
     res.status(err.status || 500);
     res.render('error');
   }
-
 });
+
 
 module.exports = app;

@@ -1,28 +1,49 @@
-import { createClient } from "redis";
+import { adminRequestHeaders } from "./app";
 import { WebSocket } from "ws";
+import { createSession } from "./graphql/add-session";
+import { redisEnv } from "./lib/select-redis-env";
+
 
 require('dotenv').config();
 const WEB_SOCKET_PORT = 8000
+let subscriber;
 
-async function BackgroundSessionWork(msg?: string) {
+async function BackgroundSessionWork(msg?: string): Promise<void> {
 
-  const client = createClient({ url: process.env.REDIS_URL })
-  await client.connect();
+  const client = await redisEnv();
 
   const subscriber = client.duplicate();
-  await subscriber.connect();
 
-  await subscriber.subscribe('channel', async (message) => {
+  const producer = subscriber.duplicate();
+
+  subscriber.on("message", async (channel, message) => {
     const msg = message;
-    await BackgroundSessionWork(msg)
+    await BackgroundSessionWork(msg);
+  });
+
+
+  await subscriber.subscribe('channel', async (err, count) => {
+
+    if (err) {
+      console.error("Failed to subscribe: %s", err.message);
+    } else {
+      console.log(
+        `Subscribed successfully! This client is currently subscribed to ${count} channels.`
+      )
+    }
   });
 
 
   if (msg === undefined) {
     return
   } else {
-    await client.LPUSH('user:queue:id', msg);
-    // I had graphql here that REALLY should have worked....
+    try {
+      await producer.lpush('user:queue:id', msg);
+      console.log('Items added to queue.')
+    } catch (error) {
+      console.error(error);
+    }
+
   }
 }
 
@@ -35,7 +56,7 @@ console.log("WebSocket server started at ws://locahost:" + WEB_SOCKET_PORT);
 
 // Register event for client connection
 server.on('connection', async function connection(ws) {
-  ws.on('channel', async function (channel, message) {
+  subscriber.on('channel', async function (channel, message) {
     // some day we'll do something here...
   });
 });
