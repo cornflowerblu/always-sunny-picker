@@ -40,12 +40,12 @@ async function BackgroundSessionWork(msg?: string): Promise<void> {
     try {
       await producer.lpush('user:queue:id', msg);
       const { id, season, episode, name } = JSON.parse(msg)
-      console.log('Items added to queue.' + {
+      console.log('Items added to queue.' + JSON.stringify({
         id: id,
         season: season,
         episode: episode,
         name: name
-      })
+      }))
     } catch (error) {
       console.error(error);
     }
