@@ -69,13 +69,9 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     });
 
 
-
-  try {
-    const publisher = ConnectRedis();
-    await publisher.publish('channel', JSON.stringify(req.signedCookies._sunnysession));
-  } catch (error) {
-    console.error(error)
-  }
+  // Connect to redis (if available) and queue up the cookie data
+  const publisher = ConnectRedis();
+  publisher.publish('channel', JSON.stringify(req.signedCookies._sunnysession));
 
 
   res.render('index',
