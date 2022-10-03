@@ -1,7 +1,7 @@
-import { adminRequestHeaders } from "./app";
 import { WebSocket } from "ws";
-import { createSession } from "./graphql/add-session";
-import { redisEnv } from "./lib/select-redis-env";
+import invariant from "tiny-invariant";
+import Redis from "ioredis";
+import ConnectRedis from "./lib/connect-redis";
 
 
 require('dotenv').config();
@@ -10,9 +10,9 @@ let subscriber;
 
 async function BackgroundSessionWork(msg?: string): Promise<void> {
 
-  const client = await redisEnv();
+  const redis = ConnectRedis();
 
-  const subscriber = client.duplicate();
+  const subscriber = redis.duplicate();
 
   const producer = subscriber.duplicate();
 

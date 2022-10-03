@@ -5,7 +5,6 @@ import cookieParser from "cookie-parser";
 import logger from "morgan"
 import { GraphQLClient } from "graphql-request";
 import invariant from 'tiny-invariant';
-import { parse } from "url";
 import Redis from 'ioredis';
 
 
@@ -29,21 +28,12 @@ const cookieSecret = process.env.COOKIE_SECRET
 invariant(cookieSecret, "COOKIE PARSER SECRET NOT SET!")
 app.use(cookieParser(cookieSecret));
 
-// Redis Variables
-const REDIS_URL = process.env.REDIS_URL
-invariant(REDIS_URL, "REDIS URL NOT SET!")
-
-
 // Set up GraphQL Client and Admin Access. There will not be user-specific data just yet so we will use admin credentials but can easily define creds on a per-request basis.
 const graphql = {
   url: process.env.GRAPHQL_URL,
   adminSecret: process.env.GRAPHQL_ADMIN_SECRET
 }
 
-// export const redisSecret = process.env.REDIS_URL
-// invariant(redisSecret, "REDIS URL NOT SET!")
-// export const client = createClient({ url: redisSecret });
-// Promise.resolve().then(async () => await client.connect());
 
 invariant(graphql.url, 'GRAPHQL URL NOT SET!');
 export const gqlClient = new GraphQLClient(graphql.url);

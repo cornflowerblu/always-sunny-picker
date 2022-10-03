@@ -5,7 +5,7 @@ import { characters } from '../constants/characters'
 import { getCharactersWithImages } from "../graphql/get-character-with-image";
 import { getSeasonEpDetails } from "../graphql/get-season-episode-details";
 import { v4 as uuidv4 } from 'uuid';
-import { redisEnv } from '../lib/select-redis-env'
+import ConnectRedis from "../lib/connect-redis";
 
 const router = express.Router();
 
@@ -69,12 +69,12 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     });
 
 
+
   try {
-    const redis = await redisEnv();
-    const publisher = redis.duplicate();
+    const publisher = ConnectRedis();
     await publisher.publish('channel', JSON.stringify(req.signedCookies._sunnysession));
   } catch (error) {
-    console.error(error);
+    console.error(error)
   }
 
 
