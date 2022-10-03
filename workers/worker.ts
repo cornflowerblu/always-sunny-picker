@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import ConnectRedis from "./lib/connect-redis";
+import ConnectRedis from "../lib/connect-redis";
 
 
 require('dotenv').config();
