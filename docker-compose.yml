@@ -33,7 +33,6 @@ services:
       - "5432:5432"
     volumes:
       - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: goares
   graphql-engine:
@@ -51,7 +50,5 @@ services:
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
 volumes:
-  db_data:
-    driver: local
   cache:
     driver: local
