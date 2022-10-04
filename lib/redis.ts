@@ -28,7 +28,7 @@ export function PubSub(channel: string): {subscriber: Redis, producer: Redis} {
 
 export async function PushToQueue(producer: Redis, key: string, {params} ): Promise<void> {
   try {
-    await producer.lpop(key, 1);
+    await producer.lpop(key, 0);
     await producer.lpush(key, JSON.stringify(params));
     console.log('Items added to queue: ' + JSON.stringify(params))
   } catch (error) {
