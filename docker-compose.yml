@@ -11,14 +11,14 @@ services:
       - AUTH_TOKEN=leLvvwyorNdFjbeAfVQxGuTJgUbsxc
       - COOKIE_SECRET=grYCuerNAVDGVttphyyooupFFkqTDK
       - REDIS_URL=redis://default:redispw@redis:6379
+    command: ["npm", "start"]
   worker:
-    build:
-      context: .
-      dockerfile: workers/Dockerfile
+    build: .
     ports: 
       - "8000:8000"
     environment:
       - REDIS_URL=redis://default:redispw@redis:6379
+    command: ["node", "./workers/worker.js"]
   redis:
     image: redis
     ports: 
