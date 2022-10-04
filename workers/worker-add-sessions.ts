@@ -1,4 +1,4 @@
-import { WebSocket } from "ws";
+import ws, { WebSocket } from "ws";
 import ConnectRedis from "../lib/connect-redis";
 
 
@@ -42,11 +42,9 @@ subscriber.subscribe('channel', async (err, count) => {
 subscriber.on("message", async (channel, message) => {
   const msg = message;
   BackgroundSessionWork(msg);
-});
-
-// Register event for client connection
-server.on('connection', async function connection(ws) {
-  subscriber.on('channel', async function (channel, message) {
-    // some day we'll do something here...
+  server.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send("Check the queue.");
+    }
   });
 });

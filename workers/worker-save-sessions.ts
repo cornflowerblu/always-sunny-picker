@@ -4,12 +4,12 @@ import { createSessions } from "../graphql/add-sessions";
 import ConnectRedis from "../lib/connect-redis";
 
 require('dotenv').config();
-const WEB_SOCKET_PORT = 8001
 
 const client = InitGraphQL();
 
-const server = new WebSocket.Server({ port: WEB_SOCKET_PORT });
-console.log("WebSocket server started at ws://locahost:" + WEB_SOCKET_PORT);
+const url = 'ws://localhost:8000'
+const server = new WebSocket(url)
+console.log("WebSocket client started");
 
 // Redis Pub/Sub
 const redis = ConnectRedis();
@@ -19,10 +19,19 @@ async function GetQueue(): Promise<Array<string>>{
   return list;
 } 
 
+server.on('message', async () => {
+  const list = await GetQueue();
+  if (list.length < 50) {
+    console.log("Queue not ready to purge")
+  } else {
+    (await GetQueue())
+    .filter(element => element.length > 0)
+    .forEach(async element => await createSessions({sessions: [JSON.parse(element)]}, client.adminRequestHeaders)
+    .then(() => redis.del("user:queue:id"))
+    .finally(() => console.log("Redis queue purged."))
+  )};
+});
 
-Promise.resolve()
-  .then(async () => (await GetQueue())
-  .filter(element => element.length > 0)
-  .forEach(async element => await createSessions({sessions: [JSON.parse(element)]}, client.adminRequestHeaders)))
-  .then(() => redis.del("user:queue:id"))
-  .finally(() => console.log("Redis queue purged."));
+
+
+  
