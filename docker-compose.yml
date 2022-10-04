@@ -39,9 +39,10 @@ services:
   graphql-engine:
     image: hasura/graphql-engine:v2.12.0
     ports:
-    - "8080:8080"
+      - "8080:8080"
     depends_on:
-    - "db"
+      - "db"
+    restart: always
     environment:
       HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:goares@db:5432/postgres      
       PG_DATABASE_URL: postgres://postgres:goares@db:5432/postgres
