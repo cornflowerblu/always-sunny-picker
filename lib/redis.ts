@@ -11,7 +11,7 @@ export function ConnectRedis(): Redis {
 export function PubSub(channel: string): {subscriber: Redis, producer: Redis} {
   const redis = ConnectRedis();
   const subscriber = redis.duplicate();
-  const producer = subscriber.duplicate();
+  const producer = redis.duplicate();
 
   subscriber.subscribe(channel, async (err, count) => {
     if (err) {
@@ -26,11 +26,11 @@ export function PubSub(channel: string): {subscriber: Redis, producer: Redis} {
   return {subscriber, producer}
 }
 
-export async function PushToQueue(msg: string, producer: Redis, key: string, {params: {}} ): Promise<void> {
+export async function PushToQueue(producer: Redis, key: string, {params} ): Promise<void> {
   try {
-    producer.lpush(key, msg);
-    const params = JSON.parse(msg)
-    console.log('Items added to queue.' + JSON.stringify(params))
+    await producer.lpop(key, 1);
+    await producer.lpush(key, JSON.stringify(params));
+    console.log('Items added to queue: ' + JSON.stringify(params))
   } catch (error) {
     console.error(error);
   }
