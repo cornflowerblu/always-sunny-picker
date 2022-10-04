@@ -10,6 +10,7 @@ import { getSingleSeason } from "../graphql/select-episode-filters/get-single-se
 import { getEpisodesBySeason } from "../graphql/select-episode-filters/get-episodes-by-season";
 import { getSingleEpisode } from "../graphql/select-episode-filters/get-single-episode";
 import { updateEpisode } from "../graphql/update-episode";
+import { getIdBySeasonAndEpisode } from '../graphql/get-id-by-season-and-episode'
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
@@ -28,21 +29,26 @@ router.get('/episode', async (req: Request, res: Response, next: NextFunction) =
 // The form post action and error handling
 router.post('/episode/new', async (req: Request, res: Response, next: NextFunction) => {
   const values = Object.assign({}, req.body)
-  const { id, season_number, episode_number, title, description } = req.body
+  const { season_number, episode_number, title, description } = req.body
 
   if (!season_number || !episode_number || !title || !description)
     return res.render('create-episode', { values, message: 'All fields on this form are required.' });
 
-  
-  if(id !== undefined){
-    const checkEpisodeExists = async () => await getSingleEpisode({id: id}, adminRequestHeaders)
-    if (id === (await checkEpisodeExists()).episodes_by_pk.id) {
     
+  const id = await getIdBySeasonAndEpisode({season: {_eq: season_number}, episode: {_eq: episode_number} }, adminRequestHeaders)
+  const formattedId = id.episodes[0]?.id
+
+  if (formattedId != undefined){
+
+  const checkEpisodeExists = async () => await getSingleEpisode({id: formattedId}, adminRequestHeaders)
+  
+  if (formattedId === (await checkEpisodeExists()).episodes_by_pk.id) {
+
       const seasonId = await getSeasonById({
         seasonNumber: req.body.season_number
       }, adminRequestHeaders);
   
-      const data = await updateEpisode({id: {id: id,},
+      const data = await updateEpisode({id: {id: formattedId,},
         episode: {
           episode_number: episode_number,
           title: title,
@@ -51,7 +57,7 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
         }}, adminRequestHeaders)
         res.render('create-episode', { data })
     }
-  } 
+  }
   else {
     try {
       const seasonId = await getSeasonById({
