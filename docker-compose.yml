@@ -12,13 +12,24 @@ services:
       - COOKIE_SECRET=grYCuerNAVDGVttphyyooupFFkqTDK
       - REDIS_URL=redis://default:redispw@redis:6379
     command: ["npm", "start"]
-  worker:
+  worker-add-sessions:
     build: .
     ports: 
       - "8000:8000"
     environment:
       - REDIS_URL=redis://default:redispw@redis:6379
-    command: ["node", "./workers/worker.js"]
+    command: ["node", "./workers/worker-add-sessions.js"]
+  worker-save-sessions:
+    build: .
+    restart: always
+    depends_on:
+      - "worker-add-sessions"
+    environment:
+      - REDIS_URL=redis://default:redispw@redis:6379
+      - GRAPHQL_ADMIN_SECRET=myadminsecretkey
+      - GRAPHQL_URL=http://graphql-engine:8080/v1/graphql
+      - WSS_URL=ws://worker-add-sessions:8000
+    command: ["node", "./workers/worker-save-sessions.js"]    
   redis:
     image: redis
     ports: 

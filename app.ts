@@ -34,7 +34,6 @@ const graphql = {
   adminSecret: process.env.GRAPHQL_ADMIN_SECRET
 }
 
-
 invariant(graphql.url, 'GRAPHQL URL NOT SET!');
 export const gqlClient = new GraphQLClient(graphql.url);
 
