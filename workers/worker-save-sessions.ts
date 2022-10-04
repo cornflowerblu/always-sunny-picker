@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const client = InitGraphQL();
 
-const url = 'ws://localhost:8000'
+const url = process.env.WSS_URL || 'ws://localhost:8000'
 const server = new WebSocket(url)
 console.log("WebSocket client started");
 
