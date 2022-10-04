@@ -1,16 +1,12 @@
-import { WebSocket } from "ws";
 import { createSessions } from "../graphql/add-sessions";
 import ConnectRedis from "../lib/connect-redis";
 import InitGraphQL from "../lib/setup-graphql";
 
-
+// ENV
 require('dotenv').config();
-const WEB_SOCKET_PORT = 8000
-const client = InitGraphQL();
 
-// Create & Start the WebSocket server
-const server = new WebSocket.Server({ port: WEB_SOCKET_PORT });
-console.log("WebSocket server started at ws://locahost:" + WEB_SOCKET_PORT);
+// Ininitialize GraphQL
+const client = InitGraphQL();
 
 // Redis Pub/Sub
 const redis = ConnectRedis();
@@ -33,7 +29,7 @@ subscriber.on("message", async (channel, message) => {
 
   const list = await GetQueue();
     if (list.length < 50) {
-      console.log("Queue not ready to purge")
+      return;
     } else {
       list
         .filter(element => element.length > 0)
