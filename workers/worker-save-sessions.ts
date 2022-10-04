@@ -24,3 +24,5 @@ Promise.resolve()
   .then(async () => (await GetQueue())
   .filter(element => element.length > 0)
   .forEach(async element => await createSessions({sessions: [JSON.parse(element)]}, client.adminRequestHeaders)))
+  .then(() => redis.del("user:queue:id"))
+  .finally(() => console.log("Redis queue purged."));
