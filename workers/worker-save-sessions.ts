@@ -24,12 +24,12 @@ server.on('message', async () => {
   if (list.length < 50) {
     console.log("Queue not ready to purge")
   } else {
-    (await GetQueue())
-    .filter(element => element.length > 0)
-    .forEach(async element => await createSessions({sessions: [JSON.parse(element)]}, client.adminRequestHeaders)
-    .then(() => redis.del("user:queue:id"))
-    .finally(() => console.log("Redis queue purged."))
-  )};
+    list
+      .filter(element => element.length > 0)
+      .forEach(async element => await createSessions({sessions: [JSON.parse(element)]}, client.adminRequestHeaders)
+      .then(async () => await redis.del("user:queue:id"))
+      .finally(() => console.log("Redis queue purged."))
+    )};
 });
 
 

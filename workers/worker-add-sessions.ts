@@ -5,7 +5,7 @@ import ConnectRedis from "../lib/connect-redis";
 require('dotenv').config();
 const WEB_SOCKET_PORT = 8000
 
-function BackgroundSessionWork(msg: string): void {
+async function BackgroundSessionWork(msg: string): Promise<void> {
   try {
     producer.lpush('user:queue:id', msg);
     const { id, season, episode, name } = JSON.parse(msg)
@@ -41,10 +41,8 @@ subscriber.subscribe('channel', async (err, count) => {
 
 subscriber.on("message", async (channel, message) => {
   const msg = message;
-  BackgroundSessionWork(msg);
+  await BackgroundSessionWork(msg);
   server.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send("Check the queue.");
-    }
+    client.send(message, {fin: true});
   });
 });
