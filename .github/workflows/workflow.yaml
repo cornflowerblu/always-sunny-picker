@@ -38,4 +38,4 @@ jobs:
       run: doctl registry login --expiry-seconds 1200
 
     - name: Push image to DigitalOcean Container Registry
-      run: docker push ${{ secrets.REGISTRY_NAME }}/app
+      run: docker push ${{ secrets.REGISTRY_NAME }}/app:$(echo $GITHUB_SHA | head -c7) ${{ secrets.REGISTRY_NAME }}/app:latest
