@@ -33,8 +33,8 @@ jobs:
     
     - name: Tag container as latest and with SHA
       run: 
-        docker tag ${{ secrets.REGISTRY_NAME }}/app:$(echo $GITHUB_SHA | head -c7) ${{ secrets.REGISTRY_NAME }}/app:latest
-        docker tag ${{ secrets.REGISTRY_NAME }}/app:$(echo $GITHUB_SHA | head -c7)
+        docker tag ${{ secrets.REGISTRY_NAME }}/app ${{ secrets.REGISTRY_NAME }}/app:latest
+        docker tag ${{ secrets.REGISTRY_NAME }}/app ${{ secrets.REGISTRY_NAME }}/app:$(echo $GITHUB_SHA | head -c7)
 
     - name: Log in to DigitalOcean Container Registry with short-lived credentials
       run: doctl registry login --expiry-seconds 1200
