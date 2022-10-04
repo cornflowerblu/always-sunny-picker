@@ -5,7 +5,7 @@ import { characters } from '../constants/characters'
 import { getCharactersWithImages } from "../graphql/get-character-with-image";
 import { getSeasonEpDetails } from "../graphql/get-season-episode-details";
 import { v4 as uuidv4 } from 'uuid';
-import ConnectRedis from "../lib/connect-redis";
+import {ConnectRedis} from "../lib/redis";
 
 const router = express.Router();
 

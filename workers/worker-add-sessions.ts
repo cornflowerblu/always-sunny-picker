@@ -1,5 +1,5 @@
 import { createSessions } from "../graphql/add-sessions";
-import ConnectRedis from "../lib/connect-redis";
+import {ConnectRedis} from "../lib/redis";
 import InitGraphQL from "../lib/setup-graphql";
 
 // ENV
@@ -34,9 +34,9 @@ subscriber.on("message", async (channel, message) => {
       list
         .filter(element => element.length > 0)
         .forEach(async element => await createSessions({sessions: [JSON.parse(element)]}, client.adminRequestHeaders)
-        .then(async () => await redis.del("user:queue:id"))
-        .finally(() => console.log("Redis queue purged."))
+        .then(async () => await redis.del("user:queue:id"))        
       )};
+      console.log("Redis queue purged.")
 });
 
 // Functions
