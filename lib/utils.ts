@@ -7,6 +7,5 @@ export function safelyParseJSON(json: string) {
     console.error('Badly formatted JSON. Cannot parse!');
     return {};
   }
-
   return parsed;
 }
