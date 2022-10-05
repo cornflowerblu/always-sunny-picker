@@ -19,7 +19,7 @@ subscriber.on("message", async (channel, message) => {
   await PushToQueue(producer, key, { params: { id, season, episode, name } })
   const list = await GetQueue(key, redis);
 
-  list.length < 10 ? list : list
+  list.length < 50 ? list : list
     .filter(element => element.length > 0)
     .forEach(async element =>
       await createSessions({ sessions: [JSON.parse(element)] }, client.adminRequestHeaders)
