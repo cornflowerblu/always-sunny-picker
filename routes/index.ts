@@ -5,7 +5,7 @@ import { characters } from '../constants/characters'
 import { getCharactersWithImages } from "../graphql/get-character-with-image";
 import { getSeasonEpDetails } from "../graphql/get-season-episode-details";
 import { v4 as uuidv4 } from 'uuid';
-import {ConnectRedis, GetQueue} from "../lib/redis";
+import { ConnectRedis, GetQueue } from "../lib/redis";
 
 const router = express.Router();
 
@@ -33,12 +33,40 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
   // Try to grab from cache first
   const redis = ConnectRedis();
-  const id = req.signedCookies._sunnysession.id
+  const id = req.signedCookies._sunnysession?.id
   const list = await GetQueue(id, redis);
 
-  list.forEach(element => {
-    console.log(element);
-  });
+
+  if (list.length > 0) {
+    let i: number = list.length - list.length;
+    const parsed = JSON.parse(list[i]);
+    await redis.lpop(id);
+
+    res.cookie('_sunnysession', {
+      id: id,
+      time: Date.now(),
+      season: parsed.season,
+      episode: parsed.episode,
+      title: "Always Sunny Episode Picker",
+      image: parsed.image,
+      name: parsed.name,
+    },
+      {
+        secure: true,
+        signed: true,
+      });
+
+    res.render('index',
+      {
+        title: "Always Sunny Episode Picker",
+        image: parsed.image,
+        name: parsed.name,
+        season: parsed.season,
+        episode: parsed.episode,
+      });
+
+    return;
+  }
 
 
 
@@ -81,10 +109,9 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 
   // Connect to redis (if available) and queue up the cookie data
-  const publisher = ConnectRedis();
   const session = JSON.stringify(req.signedCookies._sunnysession)
-  publisher.publish('channel', session );
-  publisher.publish('episode-cache', session);
+  redis.publish('channel', session);
+  redis.publish('episode-cache', session);
 
 
   res.render('index',
