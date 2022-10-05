@@ -1,7 +1,7 @@
 import { createSessions } from "../graphql/add-sessions";
 import { ConnectRedis, PubSub, PushToQueue, GetQueue } from "../lib/redis";
 import { safelyParseJSON } from '../lib/utils';
-import InitGraphQL from "../lib/setup-graphql";
+import InitGraphQL from "../lib/graphql";
 
 // ENV
 require('dotenv').config();

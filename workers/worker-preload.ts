@@ -2,7 +2,7 @@ import { createSessions } from "../graphql/add-sessions";
 import { getCharactersWithImages } from "../graphql/get-character-with-image";
 import { getSeasonsEpisodeCount } from "../graphql/season-episode-counts";
 import { ConnectRedis, PubSub, PushToQueue, GetQueue } from "../lib/redis";
-import InitGraphQL from "../lib/setup-graphql";
+import InitGraphQL from "../lib/graphql";
 import { safelyParseJSON } from "../lib/utils";
 
 // ENV

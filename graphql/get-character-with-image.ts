@@ -1,4 +1,4 @@
-import InitGraphQL from "../lib/setup-graphql";
+import InitGraphQL from "../lib/graphql";
 import { gql } from 'graphql-request'
 
 const client = InitGraphQL();
