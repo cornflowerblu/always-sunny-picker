@@ -56,6 +56,8 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         signed: true,
       });
 
+    redis.publish('episode-cache', req.signedCookies._sunnysession);
+
     res.render('index',
       {
         title: "Always Sunny Episode Picker",
