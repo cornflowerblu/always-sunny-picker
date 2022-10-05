@@ -21,6 +21,15 @@ services:
       - GRAPHQL_ADMIN_SECRET=myadminsecretkey
       - GRAPHQL_URL=http://graphql-engine:8080/v1/graphql      
     command: ["node", "./workers/worker-add-sessions.js"] 
+  worker-preload:
+    build: .
+    ports: 
+      - "8001:8001"
+    environment:
+      - REDIS_URL=redis://default:redispw@redis:6379
+      - GRAPHQL_ADMIN_SECRET=myadminsecretkey
+      - GRAPHQL_URL=http://graphql-engine:8080/v1/graphql      
+    command: ["node", "./workers/worker-preload.js"]    
   redis:
     image: redis
     ports: 

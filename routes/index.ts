@@ -5,7 +5,7 @@ import { characters } from '../constants/characters'
 import { getCharactersWithImages } from "../graphql/get-character-with-image";
 import { getSeasonEpDetails } from "../graphql/get-season-episode-details";
 import { v4 as uuidv4 } from 'uuid';
-import {ConnectRedis} from "../lib/redis";
+import { ConnectRedis, GetQueue } from "../lib/redis";
 
 const router = express.Router();
 
@@ -30,6 +30,45 @@ router.get('/v1', (req: Request, res: Response, next: NextFunction) => {
 
 // v2 pulls all content from the db via GraphQL & Hasura and is now the default index route
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+
+  // Try to grab from cache first
+  const redis = ConnectRedis();
+  const id = req.signedCookies._sunnysession?.id
+  const list = await GetQueue(id, redis);
+
+
+  if (list.length > 0) {
+    let i: number = list.length - list.length;
+    const parsed = JSON.parse(list[i]);
+    await redis.lpop(id);
+
+    res.cookie('_sunnysession', {
+      id: id,
+      time: Date.now(),
+      season: parsed.season,
+      episode: parsed.episode,
+      title: "Always Sunny Episode Picker",
+      image: parsed.image,
+      name: parsed.name,
+    },
+      {
+        secure: true,
+        signed: true,
+      });
+
+    res.render('index',
+      {
+        title: "Always Sunny Episode Picker",
+        image: parsed.image,
+        name: parsed.name,
+        season: parsed.season,
+        episode: parsed.episode,
+      });
+
+    return;
+  }
+
+
 
   // The queries needed for this view
   const seasonEpisode = await getSeasonsEpisodeCount({}, adminRequestHeaders);
@@ -70,8 +109,9 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 
   // Connect to redis (if available) and queue up the cookie data
-  const publisher = ConnectRedis();
-  publisher.publish('channel', JSON.stringify(req.signedCookies._sunnysession));
+  const session = JSON.stringify(req.signedCookies._sunnysession)
+  redis.publish('channel', session);
+  redis.publish('episode-cache', session);
 
 
   res.render('index',
