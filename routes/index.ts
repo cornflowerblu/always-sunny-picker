@@ -38,8 +38,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 
   if (list.length > 0) {
-    let i: number = list.length - list.length;
-    const parsed = JSON.parse(list[i]);
+    const parsed = JSON.parse(list[0]);
     await redis.lpop(id);
 
     res.cookie('_sunnysession', {
