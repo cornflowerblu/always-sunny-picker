@@ -56,7 +56,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         signed: true,
       });
 
-    redis.publish('episode-cache', req.signedCookies._sunnysession);
+    redis.publish('episode-cache', JSON.stringify(req.signedCookies._sunnysession));
 
     res.render('index',
       {
