@@ -1,6 +1,7 @@
-import { gqlClient } from '../app'
+import InitGraphQL from "../lib/setup-graphql";
 import { gql } from 'graphql-request'
 
+const client = InitGraphQL();
 
 const query = gql`
   query GetCharactersWithImages($show: uuid!) {
@@ -24,4 +25,4 @@ type CharactersResponse = {
 }
 
 export const getCharactersWithImages = async (variables: CharactersInput, requestHeaders: {}) =>
-  <CharactersResponse>await gqlClient.request(query, variables, requestHeaders)
+  <CharactersResponse>await client.gqlClient.request(query, variables, requestHeaders)

@@ -5,7 +5,7 @@ import { characters } from '../constants/characters'
 import { getCharactersWithImages } from "../graphql/get-character-with-image";
 import { getSeasonEpDetails } from "../graphql/get-season-episode-details";
 import { v4 as uuidv4 } from 'uuid';
-import {ConnectRedis} from "../lib/redis";
+import {ConnectRedis, GetQueue} from "../lib/redis";
 
 const router = express.Router();
 
@@ -30,6 +30,17 @@ router.get('/v1', (req: Request, res: Response, next: NextFunction) => {
 
 // v2 pulls all content from the db via GraphQL & Hasura and is now the default index route
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+
+  // Try to grab from cache first
+  const redis = ConnectRedis();
+  const id = req.signedCookies._sunnysession.id
+  const list = await GetQueue(id, redis);
+
+  list.forEach(element => {
+    console.log(element);
+  });
+
+
 
   // The queries needed for this view
   const seasonEpisode = await getSeasonsEpisodeCount({}, adminRequestHeaders);
@@ -71,7 +82,9 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
   // Connect to redis (if available) and queue up the cookie data
   const publisher = ConnectRedis();
-  publisher.publish('channel', JSON.stringify(req.signedCookies._sunnysession));
+  const session = JSON.stringify(req.signedCookies._sunnysession)
+  publisher.publish('channel', session );
+  publisher.publish('episode-cache', session);
 
 
   res.render('index',
