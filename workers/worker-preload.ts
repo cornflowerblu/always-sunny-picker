@@ -3,6 +3,7 @@ import { getCharactersWithImages } from "../graphql/get-character-with-image";
 import { getSeasonsEpisodeCount } from "../graphql/season-episode-counts";
 import { ConnectRedis, PubSub, PushToQueue, GetQueue } from "../lib/redis";
 import InitGraphQL from "../lib/setup-graphql";
+import { safelyParseJSON } from "../lib/utils";
 
 // ENV
 require('dotenv').config();
@@ -17,7 +18,11 @@ const { subscriber, producer } = PubSub('episode-cache');
 
 subscriber.on("message", async (channel, message) => {
 
-  const { id } = JSON.parse(message);
+  const { id } = safelyParseJSON(message);
+
+  if (Object.keys(id).length === 0) {
+    return;
+  }
 
   const key = id;
 
