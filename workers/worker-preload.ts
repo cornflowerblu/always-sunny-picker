@@ -20,7 +20,8 @@ subscriber.on("message", async (channel, message) => {
 
   const { id } = safelyParseJSON(message);
 
-  if (Object.keys(id).length === 0) {
+  if (id === null || id === undefined) {
+    console.error('ID is null or undefined... moving on.')
     return;
   }
 
