@@ -1,7 +1,7 @@
 # Builder
 FROM node:lts-alpine as builder
 COPY . .
-RUN npm install --silent --legacy-peer-deps
+RUN npm ci --legacy-peer-deps
 RUN npm run build
 RUN rm -rf node_modules
 RUN rm **/*.ts && rm tsconfig.json

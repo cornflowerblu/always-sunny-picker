@@ -15,14 +15,17 @@ services:
       AUTH_TOKEN: leLvvwyorNdFjbeAfVQxGuTJgUbsxc
       COOKIE_SECRET: grYCuerNAVDGVttphyyooupFFkqTDK
     command: ["npm", "start"]
+
   worker-add-sessions:
     build: .
     environment: *common-variables    
     command: ["node", "./workers/worker-add-sessions.js"] 
+  
   worker-preload:
     build: .
     environment: *common-variables
     command: ["node", "./workers/worker-preload.js"]    
+  
   redis:
     image: redis
     ports: 
@@ -31,6 +34,7 @@ services:
       - cache:/data
     environment:
       - REDIS_PASSWORD=redispw
+  
   db:
     image: postgres
     ports:
@@ -39,6 +43,7 @@ services:
       - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       POSTGRES_PASSWORD: goares
+  
   graphql-engine:
     image: hasura/graphql-engine:v2.12.0
     ports:
@@ -48,11 +53,18 @@ services:
     restart: always
     environment:
       HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:goares@db:5432/postgres      
-      PG_DATABASE_URL: postgres://postgres:goares@db:5432/postgres
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:goares@db:5432/postgres
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+  
+  graphql-cli:
+    image: ubuntu
+    volumes: 
+      - ./hasura/init.sh:/init.sh
+    entrypoint: sh -c "/init.sh"
+
 volumes:
   cache:
     driver: local
