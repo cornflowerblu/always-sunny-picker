@@ -64,6 +64,9 @@ services:
     volumes: 
       - ./hasura/init.sh:/init.sh
     entrypoint: sh -c "/init.sh"
+    depends_on:
+      - "db"
+      - "graphql-engine"
 
 volumes:
   cache:
