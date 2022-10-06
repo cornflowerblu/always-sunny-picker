@@ -17,14 +17,10 @@ services:
     command: ["npm", "start"]
   worker-add-sessions:
     build: .
-    ports: 
-      - "8000:8000"
     environment: *common-variables    
     command: ["node", "./workers/worker-add-sessions.js"] 
   worker-preload:
     build: .
-    ports: 
-      - "8001:8001"
     environment: *common-variables
     command: ["node", "./workers/worker-preload.js"]    
   redis:
