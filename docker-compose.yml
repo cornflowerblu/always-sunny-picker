@@ -39,8 +39,6 @@ services:
     image: postgres
     ports:
       - "5432:5432"
-    volumes:
-      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       POSTGRES_PASSWORD: goares
   
@@ -63,6 +61,7 @@ services:
     image: ubuntu
     volumes: 
       - ./hasura/init.sh:/init.sh
+      - ./hasura/config:/hasura
     entrypoint: sh -c "/init.sh"
     depends_on:
       - "db"

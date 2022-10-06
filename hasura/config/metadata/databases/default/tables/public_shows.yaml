@@ -1,0 +1,18 @@
+table:
+  name: shows
+  schema: public
+array_relationships:
+  - name: characters
+    using:
+      foreign_key_constraint_on:
+        column: show_id
+        table:
+          name: characters
+          schema: public
+  - name: seasons
+    using:
+      foreign_key_constraint_on:
+        column: show_id
+        table:
+          name: seasons
+          schema: public
