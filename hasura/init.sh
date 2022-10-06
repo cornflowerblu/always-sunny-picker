@@ -17,9 +17,9 @@ else
 
   # Apply Metadata, Migrate, Seed
   hasura metadata apply
-  hasura migrate apply --database-name default
+  hasura migrate apply --database-name shuffle
   hasura metadata reload
-  hasura seed apply --database-name default
+  hasura seed apply --database-name shuffle
 
   # Reset config.yaml
   rm -f config.yaml

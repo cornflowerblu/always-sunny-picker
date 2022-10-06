@@ -41,6 +41,7 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD: goares
+      POSTGRES_DB: shuffle
   
   graphql-engine:
     image: hasura/graphql-engine:v2.12.0
@@ -50,8 +51,8 @@ services:
       - "db"
     restart: always
     environment:
-      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:goares@db:5432/postgres      
-      DATABASE_URL: postgres://postgres:goares@db:5432/postgres
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:goares@db:5432/shuffle      
+      DATABASE_URL: postgres://postgres:goares@db:5432/shuffle
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
