@@ -139,6 +139,7 @@ ALTER TABLE public.seasons OWNER TO postgres;
 --
 
 CREATE TABLE public.sessions (
+    pk_id uuid DEFAULT gen_random_uuid() NOT NULL,
     id uuid NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
@@ -412,7 +413,7 @@ ALTER TABLE ONLY public.seasons
 --
 
 ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT sessions_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT sessions_pkey PRIMARY KEY (pk_id);
 
 
 --
