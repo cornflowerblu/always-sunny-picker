@@ -1,170 +1,12 @@
 --
--- PostgreSQL database dump
+-- Data for Name: shows; Type: TABLE DATA; Schema: public
 --
 
--- Dumped from database version 14.5 (Ubuntu 14.5-1.pgdg20.04+1)
--- Dumped by pg_dump version 14.4
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
+INSERT INTO public.shows (id, show_name) VALUES ('950e38a3-3242-44dc-8585-fd30ced6627e', 'It''s Always Sunny in Philadelphia');
+INSERT INTO public.shows (id, show_name) VALUES ('929b3b5b-8137-4da6-b6bb-49f3394f1c2f', 'Friends');
 
 --
--- Name: postgres; Type: DATABASE; Schema: -; Owner: postgres
---
-
-
-ALTER DATABASE postgres OWNER TO postgres;
-
-\connect postgres
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
--- Name: postgres; Type: DATABASE PROPERTIES; Schema: -; Owner: postgres
---
-
-
-\connect postgres
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
--- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
---
-
-
-ALTER SCHEMA public OWNER TO postgres;
-
---
--- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
---
-
-COMMENT ON SCHEMA public IS 'standard public schema';
-
-
---
--- Name: set_current_timestamp_updated_at(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION public.set_current_timestamp_updated_at() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-  _new record;
-BEGIN
-  _new := NEW;
-  _new."updated_at" = NOW();
-  RETURN _new;
-END;
-$$;
-
-
-ALTER FUNCTION public.set_current_timestamp_updated_at() OWNER TO postgres;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
---
--- Name: characters; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.characters (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    first_name text NOT NULL,
-    last_name text,
-    image_url text,
-    show_id uuid NOT NULL
-);
-
-
-ALTER TABLE public.characters OWNER TO postgres;
-
---
--- Name: episodes; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.episodes (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    season_id uuid NOT NULL,
-    title text NOT NULL,
-    description text NOT NULL,
-    episode_number integer NOT NULL
-);
-
-
-ALTER TABLE public.episodes OWNER TO postgres;
-
---
--- Name: seasons; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.seasons (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    season_number integer NOT NULL,
-    show_id uuid NOT NULL
-);
-
-
-ALTER TABLE public.seasons OWNER TO postgres;
-
---
--- Name: sessions; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.sessions (
-    pk_id uuid DEFAULT gen_random_uuid() NOT NULL,
-    id uuid NOT NULL,
-    created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone DEFAULT now() NOT NULL,
-    season integer NOT NULL,
-    episode integer NOT NULL,
-    name text NOT NULL
-);
-
-
-ALTER TABLE public.sessions OWNER TO postgres;
-
---
--- Name: shows; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.shows (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    show_name text NOT NULL
-);
-
-
-ALTER TABLE public.shows OWNER TO postgres;
-
---
--- Data for Name: characters; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: characters; Type: TABLE DATA; Schema: public
 --
 
 INSERT INTO public.characters (id, first_name, last_name, image_url, show_id) VALUES ('a2832798-ba9a-4648-babf-382163d3b38a', 'Mac', NULL, 'https://imagedelivery.net/L9C29yq0xYBazg8-FQ2piA/d3bee4d2-78ef-47c6-00e7-22460693ef00/public', '950e38a3-3242-44dc-8585-fd30ced6627e');
@@ -173,9 +15,28 @@ INSERT INTO public.characters (id, first_name, last_name, image_url, show_id) VA
 INSERT INTO public.characters (id, first_name, last_name, image_url, show_id) VALUES ('24f3d54d-3a89-4052-9af0-d68cfc909cea', 'Charlie', 'Kelly', 'https://imagedelivery.net/L9C29yq0xYBazg8-FQ2piA/67269d96-eefc-4081-fa01-9db49cccb500/public', '950e38a3-3242-44dc-8585-fd30ced6627e');
 INSERT INTO public.characters (id, first_name, last_name, image_url, show_id) VALUES ('ec58d0fa-30ac-46fd-94bd-673e25bbabb9', 'Frank', 'Reynolds', 'https://imagedelivery.net/L9C29yq0xYBazg8-FQ2piA/75fb99c2-fae1-4a28-d86c-201b560c5400/public', '950e38a3-3242-44dc-8585-fd30ced6627e');
 
+--
+-- Data for Name: seasons; Type: TABLE DATA; Schema: public
+--
+
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('d04168ed-1282-4ed6-81ba-7e0c8ea6ac14', 1, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('a1523d2e-9cfb-4b43-a6ee-1bc7dd7cf407', 2, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('c5d52064-2785-4c23-ace1-0ec4a32571a0', 3, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('8a22d4d9-713b-41a0-90b7-5a038b9ae052', 4, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('b9a15a85-5d27-416d-94ca-a65e52695ce9', 5, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('cb66c1a4-401c-4faa-a086-38dea1d7d9ac', 6, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('8af0181e-7c75-4af9-a7d7-ae356fbf40bc', 7, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('2c9f0007-13be-4c87-9392-5d3f21250d6f', 8, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('1ad4d470-bdf4-4116-acc0-3e001c4a05bb', 9, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('f43df586-9649-48e4-a698-8f17fce50bf7', 10, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('be0c5d27-9435-4851-9117-02dbc1e33917', 11, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('8d9dc34b-2354-4424-80e4-07cdc6023fdb', 12, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('137fd89b-6569-45a9-96e6-a4568650c17d', 13, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('4f74a777-de16-4f68-9a52-dc66cb423e41', 14, '950e38a3-3242-44dc-8585-fd30ced6627e');
+INSERT INTO public.seasons (id, season_number, show_id) VALUES ('9548d4c3-e487-4b06-ac55-10b44c2f0178', 15, '950e38a3-3242-44dc-8585-fd30ced6627e');
 
 --
--- Data for Name: episodes; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: episodes; Type: TABLE DATA; Schema: public
 --
 
 INSERT INTO public.episodes (id, season_id, title, description, episode_number) VALUES ('ad785c7b-c2bb-43e1-a216-7a30f1be3c03', 'b9a15a85-5d27-416d-94ca-a65e52695ce9', 'The Waitress Is Getting Married', 'The waitress is getting married and Dee is jealous that she''s beating her to the altar, so she tries to derail the wedding.', 5);
@@ -347,146 +208,8 @@ INSERT INTO public.episodes (id, season_id, title, description, episode_number) 
 INSERT INTO public.episodes (id, season_id, title, description, episode_number) VALUES ('a06d1907-e7da-4055-b454-5d4e98e417bd', '2c9f0007-13be-4c87-9392-5d3f21250d6f', 'Pop-Pop: The Final Solution', 'Dennis and Dee decide whether or not to pull the plug on their ailing grandfather. The gang learns of Pop-Pop''s history as a Nazi. Mac, Charlie and Frank set off in search of Pop-Pop''s spoils from the war.', 1);
 INSERT INTO public.episodes (id, season_id, title, description, episode_number) VALUES ('f5f871c0-b344-4c44-9c9e-8d96b4f30369', '137fd89b-6569-45a9-96e6-a4568650c17d', 'The Gang Gets New Wheels', 'Dee gets in with a group of cool, rich housewives. Dennis hits it off with some everyday blue-collar bros, and Frank struggles to renew his license; elsewhere, Charlie and Mac deal with a new generation of bicycle bullies.', 5);
 
-
 --
--- Data for Name: seasons; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('d04168ed-1282-4ed6-81ba-7e0c8ea6ac14', 1, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('a1523d2e-9cfb-4b43-a6ee-1bc7dd7cf407', 2, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('c5d52064-2785-4c23-ace1-0ec4a32571a0', 3, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('8a22d4d9-713b-41a0-90b7-5a038b9ae052', 4, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('b9a15a85-5d27-416d-94ca-a65e52695ce9', 5, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('cb66c1a4-401c-4faa-a086-38dea1d7d9ac', 6, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('8af0181e-7c75-4af9-a7d7-ae356fbf40bc', 7, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('2c9f0007-13be-4c87-9392-5d3f21250d6f', 8, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('1ad4d470-bdf4-4116-acc0-3e001c4a05bb', 9, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('f43df586-9649-48e4-a698-8f17fce50bf7', 10, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('be0c5d27-9435-4851-9117-02dbc1e33917', 11, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('8d9dc34b-2354-4424-80e4-07cdc6023fdb', 12, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('137fd89b-6569-45a9-96e6-a4568650c17d', 13, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('4f74a777-de16-4f68-9a52-dc66cb423e41', 14, '950e38a3-3242-44dc-8585-fd30ced6627e');
-INSERT INTO public.seasons (id, season_number, show_id) VALUES ('9548d4c3-e487-4b06-ac55-10b44c2f0178', 15, '950e38a3-3242-44dc-8585-fd30ced6627e');
-
-
---
--- Data for Name: sessions; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: sessions; Type: TABLE DATA; Schema: public
 --
 
-INSERT INTO public.sessions (id, created_at, updated_at, season, episode, name) VALUES ('52f2f187-fe70-4ad3-922e-73341b3f5f37', '2022-09-28 08:08:01+00', '2022-09-28 08:08:01+00', 3, 5, 'Charlie');
-
-
---
--- Data for Name: shows; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-INSERT INTO public.shows (id, show_name) VALUES ('950e38a3-3242-44dc-8585-fd30ced6627e', 'It''s Always Sunny in Philadelphia');
-INSERT INTO public.shows (id, show_name) VALUES ('929b3b5b-8137-4da6-b6bb-49f3394f1c2f', 'Friends');
-
-
---
--- Name: characters characters_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.characters
-    ADD CONSTRAINT characters_pkey PRIMARY KEY (id);
-
-
---
--- Name: episodes episodes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.episodes
-    ADD CONSTRAINT episodes_pkey PRIMARY KEY (id);
-
-
---
--- Name: seasons seasons_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.seasons
-    ADD CONSTRAINT seasons_id_key PRIMARY KEY (id);
-
-
---
--- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT sessions_pkey PRIMARY KEY (pk_id);
-
-
---
--- Name: shows shows_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.shows
-    ADD CONSTRAINT shows_pkey PRIMARY KEY (id);
-
-
---
--- Name: sessions set_public_sessions_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
---
-
-CREATE TRIGGER set_public_sessions_updated_at BEFORE UPDATE ON public.sessions FOR EACH ROW EXECUTE FUNCTION public.set_current_timestamp_updated_at();
-
-
---
--- Name: TRIGGER set_public_sessions_updated_at ON sessions; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON TRIGGER set_public_sessions_updated_at ON public.sessions IS 'trigger to set value of column "updated_at" to current timestamp on row update';
-
-
---
--- Name: characters characters_shows; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.characters
-    ADD CONSTRAINT characters_shows FOREIGN KEY (show_id) REFERENCES public.shows(id);
-
-
---
--- Name: episodes seasons_episodes; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.episodes
-    ADD CONSTRAINT seasons_episodes FOREIGN KEY (season_id) REFERENCES public.seasons(id);
-
-
---
--- Name: seasons seasons_shows; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.seasons
-    ADD CONSTRAINT seasons_shows FOREIGN KEY (show_id) REFERENCES public.shows(id);
-
-
---
--- Name: DATABASE postgres; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE CONNECT,TEMPORARY ON DATABASE postgres FROM PUBLIC;
-
-
---
--- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE ALL ON SCHEMA public FROM postgres;
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
-
-
---
--- Name: LANGUAGE plpgsql; Type: ACL; Schema: -; Owner: postgres
---
-
-GRANT ALL ON LANGUAGE plpgsql TO postgres;
-
-
---
--- PostgreSQL database dump complete
---
-
+INSERT INTO public.sessions (id, created_at, season, episode, name) VALUES ('52f2f187-fe70-4ad3-922e-73341b3f5f37', '2022-09-28 08:08:01+00', 3, 5, 'Charlie');

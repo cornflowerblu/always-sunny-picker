@@ -1,0 +1,15 @@
+table:
+  name: seasons
+  schema: public
+object_relationships:
+  - name: show
+    using:
+      foreign_key_constraint_on: show_id
+array_relationships:
+  - name: episodes
+    using:
+      foreign_key_constraint_on:
+        column: season_id
+        table:
+          name: episodes
+          schema: public

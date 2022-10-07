@@ -1,0 +1,5 @@
+- "!include public_characters.yaml"
+- "!include public_episodes.yaml"
+- "!include public_seasons.yaml"
+- "!include public_sessions.yaml"
+- "!include public_shows.yaml"

@@ -1,0 +1,7 @@
+table:
+  name: episodes
+  schema: public
+object_relationships:
+  - name: season
+    using:
+      foreign_key_constraint_on: season_id
