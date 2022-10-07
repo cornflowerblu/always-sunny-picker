@@ -26,15 +26,16 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     
-    # Set up node and cache
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 16
-        cache: 'npm'
-    
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it.
     - name: Checkout master
       uses: actions/checkout@main
+
+    # Set up node and cache
+    - name: Set Cache & Node Version
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
     
     - name: Build the stack
       run: docker-compose up -d
