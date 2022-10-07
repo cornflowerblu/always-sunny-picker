@@ -1,20 +1,17 @@
-name: Test, Build, push, and deploy
-
+name: Test, Build, Deploy
 # Controls when the action will run.
 on:
   push:
     branches:
       - main
   workflow_dispatch:
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel.
 jobs:
-
   test:    
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@main
       - name: Build the stack
         run: docker-compose up -d
       - name: Test
@@ -23,17 +20,34 @@ jobs:
           browser: chrome
   # This workflow contains a single job called "build".
   build:
+    needs: test
     # The type of runner that the job will run on.
     runs-on: ubuntu-latest
     
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+
+    - name: Get npm cache directory
+      id: npm-cache-dir
+      run: |
+        echo "::set-output name=dir::$(npm config get cache)"
+    - uses: actions/cache@v3
+      id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
+      with:
+        path: ${{ steps.npm-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it.
     - name: Checkout master
       uses: actions/checkout@main
     
-    - name: Create Artifacts Folder
-      run: mkdir images
+    # Install doctl.
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
     
     # Build a Docker image of your application in your registry and tag the image with the $GITHUB_SHA.
     - name: Build container image
@@ -42,32 +56,5 @@ jobs:
     - name: Tag container with $GITHUB_SHA.
       run: docker tag ${{ secrets.REGISTRY_NAME }}/app ${{ secrets.REGISTRY_NAME }}/app:$(echo $GITHUB_SHA | head -c7)
     
-    - name: Upload the tagged images
-      uses: actions/upload-artifact@v2
-      with:
-        name: image
-        path: images
-
-    
-  deploy:
-    needs: 
-      - test
-      - build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download images
-        uses: actions/download-artifact@v3
-        with: 
-          name: image
-
-        # Install doctl.
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Log in to DigitalOcean Container Registry with short-lived credentials
-        run: doctl registry login --expiry-seconds 1200
-
-      - name: Push image to DigitalOcean Container Registry
-        run: docker push --all-tags ${{ secrets.REGISTRY_NAME }}/app
+    - name: Log in to DigitalOcean Container Registry with short-lived credentials
+      run: doctl registry login --expiry-seconds 1200
