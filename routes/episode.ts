@@ -11,6 +11,8 @@ import { getEpisodesBySeason } from "../graphql/select-episode-filters/get-episo
 import { getSingleEpisode } from "../graphql/select-episode-filters/get-single-episode";
 import { updateEpisode } from "../graphql/update-episode";
 import { getIdBySeasonAndEpisode } from '../graphql/get-id-by-season-and-episode'
+import { getSeasonByShowId } from "../graphql/get-seasons-by-show-id";
+import { createSeasonWithShow } from "../graphql/create-season-with-show";
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
@@ -66,22 +68,41 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
   }
   else {
     try {
-      const seasonId = await getSeasonById({
-        seasonNumber: req.body.season_number
+      const { season_number, show_id, episode_number, title, description } = req.body
+
+      const getSeasons = await getSeasonByShowId({
+        id: show_id
       }, adminRequestHeaders);
       
-      /*
-      Will need to check if seasons exist based on the show ID and if not, create a record in the seasons 
-      table with the season & show ID THEN we can create an episode
-      */
+      const seasons = getSeasons.shows_by_pk.seasons
+      
+      let seasonId;
+      let new_season;
+
+      seasons.forEach(async season => {
+        if (season_number === season.season_number) {
+          seasonId = await getSeasonById({
+            seasonNumber: season_number
+          }, adminRequestHeaders)
+            }},
+      );
+
+      if(!seasonId) {
+        new_season = await createSeasonWithShow({
+          season: { 
+            season_number, 
+            show_id
+          }}, 
+          adminRequestHeaders)
+        }
      
       const data = await createEpisode({
         episode:
         {
-          season_id: seasonId.seasons[0].id,
-          episode_number: req.body.episode_number,
-          title: req.body.title,
-          description: req.body.description
+          season_id: new_season.insert_seasons_one.id ? new_season.insert_seasons_one.id : seasonId,
+          episode_number: episode_number,
+          title: title,
+          description: description
         }
       }, adminRequestHeaders);
       res.render('create-episode', { data, shows: shows.shows})
@@ -93,8 +114,6 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
       }
     }
   }});
-  
-
 
 
 // This route presents a drop-down list of shows which populate seasons which populate episodes, eventually allowing for editing, filtering, etc.
