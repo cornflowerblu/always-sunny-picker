@@ -6,6 +6,8 @@ import { getCharactersWithImages } from "../graphql/get-character-with-image";
 import { getSeasonEpDetails } from "../graphql/get-season-episode-details";
 import { v4 as uuidv4 } from 'uuid';
 import { ConnectRedis, GetQueue } from "../lib/redis";
+import { getShows } from "../graphql/select-episode-filters/get-shows";
+import { renderEpisode } from "../lib/shows";
 
 const router = express.Router();
 
@@ -71,17 +73,8 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 
 
-  // The queries needed for this view
-  const seasonEpisode = await getSeasonsEpisodeCount({}, adminRequestHeaders);
-  const charactersWithImages = await getCharactersWithImages({ show: '950e38a3-3242-44dc-8585-fd30ced6627e' }, adminRequestHeaders)
-
-  // Process the data
-  const item = seasonEpisode.seasons[Math.floor(Math.random() * seasonEpisode.seasons.length)];
-  const season = item.season_number
-  const episodeCount = item.episodes_aggregate.aggregate.count
-  const episode = getEpisode(episodeCount)
-  let random = Math.floor(Math.random() * charactersWithImages.characters.length);
-  const character = charactersWithImages.characters[random]
+  // Populate the view vars
+  const {season, episode, character} = await renderEpisode(0);
 
   // Set up the session variables to store the season / episode in the user's session as ints to make my queries easier
   let returningId;
