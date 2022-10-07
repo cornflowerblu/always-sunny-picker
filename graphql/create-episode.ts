@@ -6,12 +6,15 @@ const query = gql`
   mutation AddEpisode($episode: episodes_insert_input!) {
     insert_episodes(objects: [$episode]) {
       returning {
-        id        
+        id
         episode_number
         title
         description
         season {
           season_number
+          show {
+            show_name
+          }
         }
       }
     }
@@ -34,7 +37,11 @@ type AddEpisodeOutput = {
       title: string,
       description: string,
       season: {
-        season_number: number
+        season_number: number,
+        show: {
+          id: string,
+          show_name: string,
+        }
       }
     }]
   }

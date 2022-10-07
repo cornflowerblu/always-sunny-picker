@@ -18,9 +18,12 @@ const token = process.env.AUTH_TOKEN
 
 // Blank entry form protected by query string auth
 router.get('/episode', async (req: Request, res: Response, next: NextFunction) => {
+  
+  const shows = await getShows({}, adminRequestHeaders)
+  
   invariant(token, "AUTH_TOKEN not set!")
   if (req.query.auth === token) {
-    res.render('create-episode')
+    res.render('create-episode', shows)
   } else {
     res.render('error');
   }
@@ -28,16 +31,19 @@ router.get('/episode', async (req: Request, res: Response, next: NextFunction) =
 
 // The form post action and error handling
 router.post('/episode/new', async (req: Request, res: Response, next: NextFunction) => {
+  let shows = await getShows({}, adminRequestHeaders);
+  
   const values = Object.assign({}, req.body)
   const { season_number, episode_number, title, description } = req.body
-
+  
   if (!season_number || !episode_number || !title || !description)
     return res.render('create-episode', { values, message: 'All fields on this form are required.' });
 
     
   const id = await getIdBySeasonAndEpisode({season: {_eq: season_number}, episode: {_eq: episode_number} }, adminRequestHeaders)
-  const formattedId = id.episodes[0]?.id
 
+
+  const formattedId = id.episodes[0]?.id
   if (formattedId != undefined){
 
   const checkEpisodeExists = async () => await getSingleEpisode({id: formattedId}, adminRequestHeaders)
@@ -55,7 +61,7 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
           description: description,
           season_id: seasonId.seasons[0].id
         }}, adminRequestHeaders)
-        res.render('create-episode', { data })
+        res.render('create-episode', { data, shows: shows.shows})
     }
   }
   else {
@@ -63,7 +69,7 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
       const seasonId = await getSeasonById({
         seasonNumber: req.body.season_number
       }, adminRequestHeaders);
-  
+
       const data = await createEpisode({
         episode:
         {
@@ -73,7 +79,7 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
           description: req.body.description
         }
       }, adminRequestHeaders);
-      res.render('create-episode', { data })
+      res.render('create-episode', { data, shows: shows.shows})
     } catch {
       if (values) {
         res.render('create-episode', { values, message: 'There was a problem submitting your form, please try again.' });
