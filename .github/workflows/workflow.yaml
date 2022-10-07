@@ -26,6 +26,12 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     
+    # Set up node and cache
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+    
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it.
     - name: Checkout master
       uses: actions/checkout@main
@@ -37,18 +43,7 @@ jobs:
       uses: cypress-io/github-action@v4.2.0
       with:
         browser: chrome
-    
-    - name: Get npm cache directory
-      id: npm-cache-dir
-      run: |
-        echo "::set-output name=dir::$(npm config get cache)"
-    - uses: actions/cache@v3
-      id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
-      with:
-        path: ${{ steps.npm-cache-dir.outputs.dir }}
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node:lts-alpine
+
 
     # Install doctl.
     - name: Install doctl
