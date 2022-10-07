@@ -1,9 +1,10 @@
 import { GraphQLClient } from "graphql-request";
 import invariant from "tiny-invariant";
 
-require('dotenv').config();
 
 export default function InitGraphQL(){
+  require('dotenv').config();
+  
   const graphql = {
     url: process.env.GRAPHQL_URL,
     adminSecret: process.env.GRAPHQL_ADMIN_SECRET

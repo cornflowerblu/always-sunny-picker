@@ -1,19 +1,10 @@
-import { createSessions } from "../graphql/add-sessions";
-import { getCharactersWithImages } from "../graphql/get-character-with-image";
-import { getSeasonsEpisodeCount } from "../graphql/season-episode-counts";
-import { ConnectRedis, PubSub, PushToQueue, GetQueue } from "../lib/redis";
-import InitGraphQL from "../lib/graphql";
+import { ConnectRedis, PubSub, PushToQueue } from "../lib/redis";
 import { safelyParseJSON } from "../lib/utils";
 import { renderEpisode } from "../lib/shows";
 
-// ENV
-require('dotenv').config();
 
-// Ininitialize GraphQL
-const client = InitGraphQL();
-
-// Redis Pub/Sub
-const redis = ConnectRedis();
+// Redis queue of episodes
+ConnectRedis();
 const { subscriber, producer } = PubSub('episode-cache');
 
 
