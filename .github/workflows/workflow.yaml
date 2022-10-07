@@ -29,13 +29,6 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it.
     - name: Checkout master
       uses: actions/checkout@main
-
-    # Set up node and cache
-    - name: Set Cache & Node Version
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16
-        cache: 'npm'
     
     - name: Build the stack
       run: docker-compose up -d
@@ -44,7 +37,16 @@ jobs:
       uses: cypress-io/github-action@v4.2.0
       with:
         browser: chrome
+    
+    - name: Delete Video
+      run: rm -rf ./cypress/videos
 
+    # Set up node and cache
+    - name: Set Cache & Node Version
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
 
     # Install doctl.
     - name: Install doctl
