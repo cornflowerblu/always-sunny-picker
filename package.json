@@ -7,7 +7,8 @@
     "start": "node ./bin/www",
     "dev": "npm run build && npm start",
     "dev:live": "tsc-watch --onSuccess 'npm run dev'",
-    "test": "docker compose up -d && npx cypress run --browser chrome && rm -rf ./cypress/videos"
+    "test": "docker compose up -d && npx cypress run --browser chrome && rm -rf ./cypress/videos",
+    "test:ui":"docker compose up -d && npx cypress open"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
