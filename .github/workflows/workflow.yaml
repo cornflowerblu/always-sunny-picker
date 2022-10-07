@@ -22,7 +22,6 @@ jobs:
           browser: chrome
   # This workflow contains a single job called "build".
   build:
-    needs: test
     # The type of runner that the job will run on.
     runs-on: ubuntu-latest
     
@@ -46,8 +45,14 @@ jobs:
     - name: Tag container with $GITHUB_SHA.
       run: docker tag ${{ secrets.REGISTRY_NAME }}/app ${{ secrets.REGISTRY_NAME }}/app:$(echo $GITHUB_SHA | head -c7)
     
-    - name: Log in to DigitalOcean Container Registry with short-lived credentials
-      run: doctl registry login --expiry-seconds 1200
+  deploy:
+    needs: 
+      - test
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1200
 
-    - name: Push image to DigitalOcean Container Registry
-      run: docker push --all-tags ${{ secrets.REGISTRY_NAME }}/app
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push --all-tags ${{ secrets.REGISTRY_NAME }}/app
