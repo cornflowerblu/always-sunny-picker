@@ -69,7 +69,12 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
       const seasonId = await getSeasonById({
         seasonNumber: req.body.season_number
       }, adminRequestHeaders);
-
+      
+      /*
+      Will need to check if seasons exist based on the show ID and if not, create a record in the seasons 
+      table with the season & show ID THEN we can create an episode
+      */
+     
       const data = await createEpisode({
         episode:
         {
