@@ -1,6 +1,9 @@
 import Redis from "ioredis"
 import invariant from "tiny-invariant"
 
+// ENV
+require('dotenv').config();
+
 export function ConnectRedis(): Redis {
   const REDIS_URL = process.env.REDIS_URL;
   invariant(REDIS_URL, "REDIS URL NOT SET!");
