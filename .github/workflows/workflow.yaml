@@ -1,4 +1,4 @@
-name: Build, push, and deploy
+name: Test, Build, push, and deploy
 
 # Controls when the action will run.
 on:
@@ -9,6 +9,14 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel.
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the stack
+        run: docker-compose up -d
+      - name: Test
+        run: npx cypress run
   # This workflow contains a single job called "build".
   build:
     # The type of runner that the job will run on.
