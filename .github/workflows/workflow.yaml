@@ -9,6 +9,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel.
 jobs:
+
   test:    
     runs-on: ubuntu-latest
     steps:
@@ -31,6 +32,9 @@ jobs:
     - name: Checkout master
       uses: actions/checkout@main
     
+    - name: Create Artifacts Folder
+      run: mkdir images
+    
     # Build a Docker image of your application in your registry and tag the image with the $GITHUB_SHA.
     - name: Build container image
       run: docker build -t ${{ secrets.REGISTRY_NAME }}/app .
@@ -38,12 +42,24 @@ jobs:
     - name: Tag container with $GITHUB_SHA.
       run: docker tag ${{ secrets.REGISTRY_NAME }}/app ${{ secrets.REGISTRY_NAME }}/app:$(echo $GITHUB_SHA | head -c7)
     
+    - name: Upload the tagged images
+      uses: actions/upload-artifact@v2
+      with:
+        name: image
+        path: images
+
+    
   deploy:
     needs: 
       - test
       - build
     runs-on: ubuntu-latest
     steps:
+      - name: Download images
+        uses: actions/download-artifact@v3
+        with: 
+          name: image
+
         # Install doctl.
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
