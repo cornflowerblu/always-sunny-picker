@@ -30,10 +30,13 @@ jobs:
     - name: Checkout master
       uses: actions/checkout@main
     
-    - name: Run Tests
-      run: |
-        npm install
-        npm run test
+    - name: Build the stack
+      run: docker-compose up -d
+    
+    - name: Test
+      uses: cypress-io/github-action@v4.2.0
+      with:
+        browser: chrome
     
     - name: Get npm cache directory
       id: npm-cache-dir
