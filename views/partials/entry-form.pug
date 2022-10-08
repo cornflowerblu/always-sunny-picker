@@ -8,6 +8,9 @@ block entry_form
             label Select a Show
             select(name='show_id', id='show_id' required, class='form-select')
               option(value= values.show_id) #{show_name}
+              if shows
+                each show in shows
+                  option(value= show.id) #{show.show_name}
         div(class='row')
           div(class='form-group col-3 mb-3')
             label Season Number
