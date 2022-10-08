@@ -11,6 +11,10 @@ const query = gql`
       description
       season {
         season_number
+        show {
+          id
+          show_name
+        }
       }
     }
   }`
@@ -31,6 +35,10 @@ type UpdateEpisodeOutput = {
   update_episodes_by_pk: {
     season: {
       season_number: number,
+      show: {
+        id: string,
+        show_name: string,
+      }
     },
     id: string,
     episode_number: number,

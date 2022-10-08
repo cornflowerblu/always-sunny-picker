@@ -4,6 +4,14 @@ block entry_form
       h1(class="display-6 pb-2") Episode Entry
       form(action='/episode/new', method='POST' class='was-validated')
         div(class='row')
+          div(class='form-group col-6 mb-3')
+            label Select a Show
+            select(name='show_id', id='show_id' required, class='form-select')
+              option(value= '') Select a Show
+                if shows
+                  each show in shows
+                    option(value= show.id) #{show.show_name}
+        div(class='row')
           div(class='form-group col-3 mb-3')
             label Season Number
             input(type='text', id='season_number', name='season_number', value= (values.season_number ? values.season_number : values.season.season_number) required, class='form-control border-secondary')
@@ -21,6 +29,14 @@ block entry_form
     else
       h1(class="display-6 pb-2") Episode Entry
       form(action='/episode/new', method='POST' class='was-validated')
+        div(class='row')
+          div(class='form-group col-6 mb-3')
+            label Select a Show
+            select(name='show_id', id='show_id' required, class='form-select')
+              option(value= '') Select a Show
+                if shows
+                  each show in shows
+                    option(value= show.id) #{show.show_name}
         div(class='row')
           div(class='form-group col-3 mb-3')
             label Season Number
@@ -45,6 +61,8 @@ block entry_form
               ul(class="list-group list-group-flush")
                 li(class="list-group-item m-1")
                   <strong>ID:</strong> #{data.update_episodes_by_pk ? data.update_episodes_by_pk.id : data.insert_episodes.returning[0].id}
+                li(class="list-group-item m-1")
+                  <strong>Show:</strong> #{data.update_episodes_by_pk ? data.update_episodes_by_pk.season.show.show_name : data.insert_episodes.returning[0].season.show.show_name}                
                 li(class="list-group-item m-1")
                   <strong>Season:</strong> #{data.update_episodes_by_pk ? data.update_episodes_by_pk.season.season_number : data.insert_episodes.returning[0].season.season_number}
                 li(class="list-group-item m-1")

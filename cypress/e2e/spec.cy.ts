@@ -38,6 +38,7 @@ describe('episode entry', () => {
 
   it('submits with data', () => {
     cy.visit('localhost:3000/episode?auth=leLvvwyorNdFjbeAfVQxGuTJgUbsxc')
+    cy.get('#show_id').select("It's Always Sunny in Philadelphia")
     cy.get('input[name="season_number"]')
       .type('1')
       .should('have.value', '1')
@@ -77,6 +78,7 @@ describe('episode updates', () => {
   })
   
   it('can update an episode', () => {
+    cy.get('#show_id').select("It's Always Sunny in Philadelphia")
     cy.get('input[name="episode_number"]')
       .type('0')
       .should('have.value', '10')

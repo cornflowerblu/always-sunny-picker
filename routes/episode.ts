@@ -11,6 +11,8 @@ import { getEpisodesBySeason } from "../graphql/select-episode-filters/get-episo
 import { getSingleEpisode } from "../graphql/select-episode-filters/get-single-episode";
 import { updateEpisode } from "../graphql/update-episode";
 import { getIdBySeasonAndEpisode } from '../graphql/get-id-by-season-and-episode'
+import { getSeasonByShowId } from "../graphql/get-seasons-by-show-id";
+import { createSeasonWithShow } from "../graphql/create-season-with-show";
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
@@ -18,9 +20,12 @@ const token = process.env.AUTH_TOKEN
 
 // Blank entry form protected by query string auth
 router.get('/episode', async (req: Request, res: Response, next: NextFunction) => {
+  
+  const shows = await getShows({}, adminRequestHeaders)
+  
   invariant(token, "AUTH_TOKEN not set!")
   if (req.query.auth === token) {
-    res.render('create-episode')
+    res.render('create-episode', shows)
   } else {
     res.render('error');
   }
@@ -28,16 +33,19 @@ router.get('/episode', async (req: Request, res: Response, next: NextFunction) =
 
 // The form post action and error handling
 router.post('/episode/new', async (req: Request, res: Response, next: NextFunction) => {
+  let shows = await getShows({}, adminRequestHeaders);
+  
   const values = Object.assign({}, req.body)
-  const { season_number, episode_number, title, description } = req.body
-
+  const { show_id, season_number, episode_number, title, description } = req.body
+  
   if (!season_number || !episode_number || !title || !description)
     return res.render('create-episode', { values, message: 'All fields on this form are required.' });
 
     
-  const id = await getIdBySeasonAndEpisode({season: {_eq: season_number}, episode: {_eq: episode_number} }, adminRequestHeaders)
-  const formattedId = id.episodes[0]?.id
+  const id = await getIdBySeasonAndEpisode({season: {_eq: season_number}, episode: {_eq: episode_number}, show_id: {_eq: show_id} }, adminRequestHeaders)
 
+
+  const formattedId = id.episodes[0]?.id
   if (formattedId != undefined){
 
   const checkEpisodeExists = async () => await getSingleEpisode({id: formattedId}, adminRequestHeaders)
@@ -55,25 +63,49 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
           description: description,
           season_id: seasonId.seasons[0].id
         }}, adminRequestHeaders)
-        res.render('create-episode', { data })
+        res.render('create-episode', { data, shows: shows.shows})
     }
   }
   else {
     try {
-      const seasonId = await getSeasonById({
-        seasonNumber: req.body.season_number
+      const { season_number, show_id, episode_number, title, description } = req.body
+
+      const getSeasons = await getSeasonByShowId({
+        id: show_id
       }, adminRequestHeaders);
-  
+      
+      const seasons = getSeasons.shows_by_pk.seasons
+      
+      let seasonId;
+      let new_season;
+
+      seasons.forEach(async season => {
+        if (season_number === season.season_number) {
+          seasonId = await getSeasonById({
+            seasonNumber: season_number
+          }, adminRequestHeaders)
+            }},
+      );
+
+      if(!seasonId) {
+        new_season = await createSeasonWithShow({
+          season: { 
+            season_number, 
+            show_id
+          }}, 
+          adminRequestHeaders)
+        }
+     
       const data = await createEpisode({
         episode:
         {
-          season_id: seasonId.seasons[0].id,
-          episode_number: req.body.episode_number,
-          title: req.body.title,
-          description: req.body.description
+          season_id: new_season.insert_seasons_one.id ? new_season.insert_seasons_one.id : seasonId,
+          episode_number: episode_number,
+          title: title,
+          description: description
         }
       }, adminRequestHeaders);
-      res.render('create-episode', { data })
+      res.render('create-episode', { data, shows: shows.shows})
     } catch {
       if (values) {
         res.render('create-episode', { values, message: 'There was a problem submitting your form, please try again.' });
@@ -82,8 +114,6 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
       }
     }
   }});
-  
-
 
 
 // This route presents a drop-down list of shows which populate seasons which populate episodes, eventually allowing for editing, filtering, etc.
