@@ -13,6 +13,7 @@ import { updateEpisode } from "../graphql/update-episode";
 import { getIdBySeasonAndEpisode } from '../graphql/get-id-by-season-and-episode'
 import { getSeasonByShowId } from "../graphql/get-seasons-by-show-id";
 import { createSeasonWithShow } from "../graphql/create-season-with-show";
+import { filter } from "cypress/types/bluebird";
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
@@ -46,6 +47,7 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
 
 
   const formattedId = id.episodes[0]?.id
+
   if (formattedId != undefined){
 
   const checkEpisodeExists = async () => await getSingleEpisode({id: formattedId}, adminRequestHeaders)
@@ -75,31 +77,34 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
       }, adminRequestHeaders);
       
       const seasons = getSeasons.shows_by_pk.seasons
-      
-      let seasonId;
-      let new_season;
 
-      seasons.forEach(async season => {
-        if (season_number === season.season_number) {
-          seasonId = await getSeasonById({
-            seasonNumber: season_number
-          }, adminRequestHeaders)
-            }},
-      );
+      let seasonId;
+      let season;
+
+      const result = seasons.map(season => season.season_number)
+      
+      if(result.includes(Number(season_number))) {
+        seasonId = await getSeasonById({
+          seasonNumber: season_number
+        }, adminRequestHeaders)
+      }              
 
       if(!seasonId) {
-        new_season = await createSeasonWithShow({
+        let result = await createSeasonWithShow({
           season: { 
             season_number, 
             show_id
           }}, 
           adminRequestHeaders)
-        }
-     
+          season = result.insert_seasons_one.id
+        } else {
+          season = seasonId.seasons[0].id
+        }    
+
       const data = await createEpisode({
         episode:
         {
-          season_id: new_season.insert_seasons_one.id ? new_season.insert_seasons_one.id : seasonId,
+          season_id: season,
           episode_number: episode_number,
           title: title,
           description: description
@@ -108,7 +113,8 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
       res.render('create-episode', { data, shows: shows.shows})
     } catch {
       if (values) {
-        res.render('create-episode', { values, message: 'There was a problem submitting your form, please try again.' });
+        const show = await getSingleShow({id: show_id}, adminRequestHeaders)
+        res.render('create-episode', { values, show_name: show.shows_by_pk.show_name, message: 'There was a problem submitting your form, please try again.' });
       } else {
         res.render('error');
       }
