@@ -6,7 +6,7 @@ block entry_form
         div(class='row')
           div(class='form-group col-6 mb-3')
             label Select a Show
-            select(name='show_id', required, class='form-select')
+            select(name='show_id', id='show_id' required, class='form-select')
               option(value= '') Select a Show
                 if shows
                   each show in shows
@@ -32,7 +32,7 @@ block entry_form
         div(class='row')
           div(class='form-group col-6 mb-3')
             label Select a Show
-            select(name='show_id', required, class='form-select')
+            select(name='show_id', id='show_id' required, class='form-select')
               option(value= '') Select a Show
                 if shows
                   each show in shows

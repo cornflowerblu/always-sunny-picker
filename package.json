@@ -9,7 +9,7 @@
     "dev:live": "tsc-watch --onSuccess 'npm run dev'",
     "test": "docker compose up -d && npx cypress run --browser chrome && rm -rf ./cypress/videos",
     "test:ui":"docker compose up -d && npm run prune:js && npx cypress open",
-    "prune:js":"rm -rf **/*.js && rm -rf cypress/**/*.js"
+    "prune:js":"rm -rf **/*.js && rm -rf cypress/**/*.js && rm -f cypress.config.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
