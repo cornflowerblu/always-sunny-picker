@@ -36,12 +36,30 @@ describe('episode entry', () => {
     cy.get('form').submit().document().get('.text-danger').contains('required')
   })
 
-  it('submits with data', () => {
+  it('inserts a new episode', () => {
     cy.visit('localhost:3000/episode?auth=leLvvwyorNdFjbeAfVQxGuTJgUbsxc')
     cy.get('#show_id').select("It's Always Sunny in Philadelphia")
     cy.get('input[name="season_number"]')
-      .type('1')
-      .should('have.value', '1')
+      .type('10')
+      .should('have.value', '10')
+      .get('input[name="episode_number"]')
+      .type('20')
+      .should('have.value', '20')
+      .get('input[name="title"]')
+      .type('stuff happens for the first time')
+      .should('have.value', 'stuff happens for the first time')
+      .get('input[name="description"]')
+      .type('the one with all the things')
+      .should('have.value', 'the one with all the things')
+    cy.get('form').submit().document().get('h2').contains('Episode Confirmation')
+    })
+
+  it('updates an existing episode from the entry form', () => {
+    cy.visit('localhost:3000/episode?auth=leLvvwyorNdFjbeAfVQxGuTJgUbsxc')
+    cy.get('#show_id').select("It's Always Sunny in Philadelphia")
+    cy.get('input[name="season_number"]')
+      .type('5')
+      .should('have.value', '5')
       .get('input[name="episode_number"]')
       .type('2')
       .should('have.value', '2')
@@ -53,6 +71,24 @@ describe('episode entry', () => {
       .should('have.value', 'the one with all the things')
     cy.get('form').submit().document().get('h2').contains('Episode Confirmation')
     })
+
+    it('creates a new season and associates with a show', () => {
+      cy.visit('localhost:3000/episode?auth=leLvvwyorNdFjbeAfVQxGuTJgUbsxc')
+      cy.get('#show_id').select("It's Always Sunny in Philadelphia")
+      cy.get('input[name="season_number"]')
+        .type('25')
+        .should('have.value', '25')
+        .get('input[name="episode_number"]')
+        .type('1')
+        .should('have.value', '1')
+        .get('input[name="title"]')
+        .type('They sure have a lot of seasons')
+        .should('have.value', 'They sure have a lot of seasons')
+        .get('input[name="description"]')
+        .type('the one with all the things')
+        .should('have.value', 'the one with all the things')
+      cy.get('form').submit().document().get('h2').contains('Episode Confirmation')
+      })
 });
 
 describe('episode updates', () => {
