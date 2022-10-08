@@ -1,12 +1,10 @@
-import { ConnectRedis, PubSub, PushToQueue } from "../lib/redis";
+import { PubSub, PushToQueue } from "../lib/redis";
 import { safelyParseJSON } from "../lib/utils";
 import { renderEpisode } from "../lib/shows";
 
 
 // Redis queue of episodes
-ConnectRedis();
 const { subscriber, producer } = PubSub('episode-cache');
-
 
 subscriber.on("message", async (channel, message) => {
 
