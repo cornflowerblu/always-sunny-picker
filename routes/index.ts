@@ -143,8 +143,4 @@ function getSeasonOrEpisode(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-function getEpisode(max: number): number {
-  return Math.floor(Math.random() * (max - 1) + 1);
-}
-
 module.exports = router;

@@ -13,7 +13,6 @@ import { updateEpisode } from "../graphql/update-episode";
 import { getIdBySeasonAndEpisode } from '../graphql/get-id-by-season-and-episode'
 import { getSeasonByShowId } from "../graphql/get-seasons-by-show-id";
 import { createSeasonWithShow } from "../graphql/create-season-with-show";
-import { filter } from "cypress/types/bluebird";
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
