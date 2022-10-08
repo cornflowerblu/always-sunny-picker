@@ -7,9 +7,10 @@ block entry_form
           div(class='form-group col-6 mb-3')
             label Select a Show
             select(name='show_id', required, class='form-select')
-              if shows 
-                each show in shows
-                  option(value= show.id) #{show.show_name}
+              option(value= '') Select a Show
+                if shows
+                  each show in shows
+                    option(value= show.id) #{show.show_name}
         div(class='row')
           div(class='form-group col-3 mb-3')
             label Season Number
@@ -32,9 +33,10 @@ block entry_form
           div(class='form-group col-6 mb-3')
             label Select a Show
             select(name='show_id', required, class='form-select')
-              if shows
-                each show in shows
-                  option(value= show.id) #{show.show_name}
+              option(value= '') Select a Show
+                if shows
+                  each show in shows
+                    option(value= show.id) #{show.show_name}
         div(class='row')
           div(class='form-group col-3 mb-3')
             label Season Number

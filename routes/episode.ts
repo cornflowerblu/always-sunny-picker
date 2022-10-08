@@ -36,13 +36,13 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
   let shows = await getShows({}, adminRequestHeaders);
   
   const values = Object.assign({}, req.body)
-  const { season_number, episode_number, title, description } = req.body
+  const { show_id, season_number, episode_number, title, description } = req.body
   
   if (!season_number || !episode_number || !title || !description)
     return res.render('create-episode', { values, message: 'All fields on this form are required.' });
 
     
-  const id = await getIdBySeasonAndEpisode({season: {_eq: season_number}, episode: {_eq: episode_number} }, adminRequestHeaders)
+  const id = await getIdBySeasonAndEpisode({season: {_eq: season_number}, episode: {_eq: episode_number}, show_id: {_eq: show_id} }, adminRequestHeaders)
 
 
   const formattedId = id.episodes[0]?.id
