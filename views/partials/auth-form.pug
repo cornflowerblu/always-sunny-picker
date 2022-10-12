@@ -1,11 +1,14 @@
 block auth_form
   div(class='auth')
     h1(class="display-6 pb-2") #{title}
-    form(action=`/account/${action}`, method='POST' class='was-validated')
+    form(action=`/account/${action}`, method='POST', class='was-validated')
       div(class='form-group mb-3')
         label Email address
-        input(type='email', name='email' placeholder='name@example.com', required, class='form-control border-secondary')        
-      div(class='form-group mb-3')
-        label(for='floatingPassword') Password
-        input(type='password' placeholder='Password', required, class='form-control border-secondary')
-    input(type='submit', value='Submit', class='btn btn-primary w-50')
+        input(type='email', name='email', placeholder='name@example.com', required, class='form-control border-secondary mb-3')        
+        label Password
+        input(type='password', name='password', required, class='form-control border-secondary mb-3')
+        input(type='submit', value='Submit', class='btn btn-primary w-50 mb-3')
+      if error
+        p(class='text-danger') #{message}
+      else 
+        p(class='text-primary') #{message}
