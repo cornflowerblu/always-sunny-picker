@@ -16,6 +16,7 @@ import { createSeasonWithShow } from "../graphql/create-season-with-show";
 import { getAuthTokensByUser } from "../graphql/get-auth-tokens-by-user";
 import {compare} from 'bcrypt';
 import { getAuthSession } from "../graphql/get-auth-session";
+import { signedCookies } from "cookie-parser";
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
@@ -23,25 +24,25 @@ const router = express.Router();
 
 // Blank entry form protected by query string auth
 router.get('/episode', async (req: Request, res: Response, next: NextFunction) => {
-  let isExpired = (date: string) => date < new Date().toISOString();
+  let isExpired = (date: string) => date > new Date().toISOString();
 
   const shows = await getShows({}, adminRequestHeaders)
   
   let hash;
   let dbEncryptToken;
   let token;
-  let time;
-  
+  let expired;
+
   try {
     hash = req.signedCookies._sunnysessionauth.token
     dbEncryptToken = await getAuthSession({_eq: hash}, adminRequestHeaders)
     token = dbEncryptToken.auth_sessions[0]?.token,
-    time = dbEncryptToken.auth_sessions[0]?.time,
-    console.log('expired?', isExpired(time));
-    console.log(time)
+    expired = isExpired(dbEncryptToken.auth_sessions[0]?.time);
   } catch (error) {
     console.log(error);
-    return res.render('error');   
+    return res.render('auth', {
+      title: 'Please Sign In',
+      action: 'validate'});   
   }
 
 
@@ -50,13 +51,18 @@ router.get('/episode', async (req: Request, res: Response, next: NextFunction) =
     auth = await compare(token, hash)
   } catch (error) {
     console.log(error);
-    return res.render('error');
+    return res.render('auth', {
+      title: 'Please Sign In',
+      action: 'validate'});
   }
 
-  if (auth) {
+  if (auth && !expired) {
     res.render('create-episode', shows)
   } else {
-    res.render('error');
+    res.clearCookie('_sunnysessionauth');
+    return res.render('auth', {
+      title: 'Please Sign In',
+      action: 'validate'});
   }
 
 });
@@ -153,26 +159,45 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
 
 // This route presents a drop-down list of shows which populate seasons which populate episodes, eventually allowing for editing, filtering, etc.
 router.get('/episode/edit', async (req: Request, res: Response, next: NextFunction) => {
+  let isExpired = (date: string) => date > new Date().toISOString();
+
   const shows = await getShows({}, adminRequestHeaders)
+  
+  let hash;
+  let dbEncryptToken;
+  let token;
+  let expired;
 
-  const hash = req.signedCookies._sunnysessionauth.token
+  try {
+    hash = req.signedCookies._sunnysessionauth.token
+    dbEncryptToken = await getAuthSession({_eq: hash}, adminRequestHeaders)
+    token = dbEncryptToken.auth_sessions[0]?.token,
+    expired = isExpired(dbEncryptToken.auth_sessions[0]?.time);
+  } catch (error) {
+    console.log(error);
+    return res.render('auth', {
+      title: 'Please Sign In',
+      action: 'validate'});   
+  }
 
-  const dbEncryptToken = await getAuthSession({_eq: hash}, adminRequestHeaders)
-
-  const token = dbEncryptToken.auth_sessions[0]?.token
 
   let auth;
   try {
     auth = await compare(token, hash)
   } catch (error) {
     console.log(error);
-    return res.render('error');
+    return res.render('auth', {
+      title: 'Please Sign In',
+      action: 'validate'});
   }
 
-  if (auth) {
+  if (auth && !expired) {
     res.render('update-episode', shows)
   } else {
-    res.render('error');
+    res.clearCookie('_sunnysessionauth');
+    return res.render('auth', {
+      title: 'Please Sign In',
+      action: 'validate'});
   }
 });
 
