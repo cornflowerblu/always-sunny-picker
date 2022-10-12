@@ -14,7 +14,6 @@ const token = process.env.AUTH_TOKEN
 router.get('/auth', async (req: Request, res: Response, next: NextFunction) => {
   
   let hashedToken = await encryptToken(generate());
-  console.log('token', hashedToken);
 
   // Set up the cookie w/ encrypted token
   res.cookie('_sunnysessionauth', {
