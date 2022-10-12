@@ -35,3 +35,15 @@ div #values {
 div #values h1 {
   font-size: 2rem;
 }
+
+.auth {
+  grid-row: auto;
+  width: 100;
+}
+
+@media screen and (min-width: 1200px) {
+  .auth {
+      width: 50%;
+      margin: auto;
+  }
+}

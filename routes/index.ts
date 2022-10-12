@@ -1,15 +1,17 @@
 import express, { NextFunction, Request, Response } from "express";
-import { getSeasonsEpisodeCount } from "../graphql/season-episode-counts";
 import { adminRequestHeaders } from "../app";
 import { characters } from '../constants/characters'
-import { getCharactersWithImages } from "../graphql/get-character-with-image";
 import { getSeasonEpDetails } from "../graphql/get-season-episode-details";
 import { v4 as uuidv4 } from 'uuid';
 import { ConnectRedis, GetQueue } from "../lib/redis";
-import { getShows } from "../graphql/select-episode-filters/get-shows";
 import { renderEpisode } from "../lib/shows";
 
 const router = express.Router();
+
+//Test auth
+router.get('/auth', (req: Request, res: Response, next: NextFunction) => {
+  res.render('auth', {})
+})
 
 // The OG shuffler pulling from memory w/o all episodes because they vary per season
 router.get('/v1', (req: Request, res: Response, next: NextFunction) => {

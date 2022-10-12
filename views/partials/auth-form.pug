@@ -1,0 +1,11 @@
+block auth_form
+  div(class='auth')
+    h1(class="display-6 pb-2") Please Sign In
+    form(action='/episode/new', method='POST' class='was-validated')
+      div(class='form-group mb-3')
+        label Email address
+        input(type='email', name='email' placeholder='name@example.com', required, class='form-control border-secondary')        
+      div(class='form-group mb-3')
+        label(for='floatingPassword') Password
+        input(type='password' placeholder='Password', required, class='form-control border-secondary')
+    input(type='submit', value='Submit', class='btn btn-primary w-50')
