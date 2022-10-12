@@ -13,6 +13,9 @@ import { updateEpisode } from "../graphql/update-episode";
 import { getIdBySeasonAndEpisode } from '../graphql/get-id-by-season-and-episode'
 import { getSeasonByShowId } from "../graphql/get-seasons-by-show-id";
 import { createSeasonWithShow } from "../graphql/create-season-with-show";
+import { getAuthTokensByUser } from "../graphql/get-auth-tokens-by-user";
+import {compare} from 'bcrypt';
+import { getAuthSession } from "../graphql/get-auth-session";
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
@@ -22,13 +25,18 @@ const token = process.env.AUTH_TOKEN
 router.get('/episode', async (req: Request, res: Response, next: NextFunction) => {
   
   const shows = await getShows({}, adminRequestHeaders)
-  
-  invariant(token, "AUTH_TOKEN not set!")
-  if (req.query.auth === token) {
+
+  const qsEncryptToken = req.query.auth as string
+  const dbEncryptToken = await getAuthSession({_eq: qsEncryptToken}, adminRequestHeaders)
+
+  const token = dbEncryptToken.auth_sessions[0]?.enc_token
+
+  if (req.signedCookies._sunnysessionauth.token === token) {
     res.render('create-episode', shows)
   } else {
     res.render('error');
   }
+
 });
 
 // The form post action and error handling

@@ -4,8 +4,8 @@ import { gql } from 'graphql-request'
 const client = InitGraphQL();
 
 const query = gql`
-  mutation CreateAuthSession($token: String!, $date: String!, $user_id: uuid!) {
-    insert_auth_sessions_one(object: {token: $token, date: $date, user_id: $user_id}) {
+  mutation CreateAuthSession($token: String!, $enc_token: String!, $user_id: uuid!, $date: bigint!) {
+    insert_auth_sessions_one(object: {token: $token, enc_token: $enc_token, user_id: $user_id, date: $date}) {
       id
       token
     }
@@ -14,7 +14,8 @@ const query = gql`
 type CreateAuthSessionInput = {
   user_id: string,
   token: string,
-  date: string,
+  enc_token: string,
+  date: number,
 }
 
 export type CreateAuthSessionOutput = {

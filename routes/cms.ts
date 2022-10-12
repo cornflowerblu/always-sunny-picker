@@ -109,7 +109,7 @@ router.post('/account/validate', async (req: Request, res: Response, next: NextF
         signed: true,
       })
     
-    const authSession = await createAuthSession({user_id: user.auth_users[0].id, token: token, date: date.toString() }, adminRequestHeaders)
+    const authSession = await createAuthSession({user_id: user.auth_users[0].id, token: token, enc_token: hashedToken, date: date }, adminRequestHeaders)
 
     const hideTheToken = await validateToken(authSession.insert_auth_sessions_one.token, hashedToken);
 
@@ -122,7 +122,7 @@ router.post('/account/validate', async (req: Request, res: Response, next: NextF
       });
     }
 
-    res.redirect('/episode?auth=leLvvwyorNdFjbeAfVQxGuTJgUbsxc')
+    res.redirect(`/episode?auth=${hashedToken}`)
 
 });
 
