@@ -28,12 +28,17 @@ router.get('/episode', async (req: Request, res: Response, next: NextFunction) =
 
   const hash = req.signedCookies._sunnysessionauth.token
 
-  // const qsEncryptToken = req.query.auth as string
   const dbEncryptToken = await getAuthSession({_eq: hash}, adminRequestHeaders)
 
   const token = dbEncryptToken.auth_sessions[0]?.token
 
-  const auth = await compare(token, hash)
+  let auth;
+  try {
+    auth = await compare(token, hash)
+  } catch (error) {
+    console.log(error);
+    return res.render('error');
+  }
 
   if (auth) {
     res.render('create-episode', shows)
@@ -135,10 +140,24 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
 
 // This route presents a drop-down list of shows which populate seasons which populate episodes, eventually allowing for editing, filtering, etc.
 router.get('/episode/edit', async (req: Request, res: Response, next: NextFunction) => {
-  invariant(token, "AUTH_TOKEN not set!")
-  if (req.query.auth === token) {
-    const shows = await getShows({}, adminRequestHeaders);
-    res.render('update-episode', shows);
+  const shows = await getShows({}, adminRequestHeaders)
+
+  const hash = req.signedCookies._sunnysessionauth.token
+
+  const dbEncryptToken = await getAuthSession({_eq: hash}, adminRequestHeaders)
+
+  const token = dbEncryptToken.auth_sessions[0]?.token
+
+  let auth;
+  try {
+    auth = await compare(token, hash)
+  } catch (error) {
+    console.log(error);
+    return res.render('error');
+  }
+
+  if (auth) {
+    res.render('update-episode', shows)
   } else {
     res.render('error');
   }
