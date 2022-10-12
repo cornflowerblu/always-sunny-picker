@@ -9,3 +9,4 @@ export function safelyParseJSON(json: string) {
   }
   return parsed;
 }
+

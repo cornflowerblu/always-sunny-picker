@@ -1,7 +1,7 @@
 block auth_form
   div(class='auth')
-    h1(class="display-6 pb-2") Please Sign In
-    form(action='/episode/new', method='POST' class='was-validated')
+    h1(class="display-6 pb-2") #{title}
+    form(action=`/account/${action}`, method='POST' class='was-validated')
       div(class='form-group mb-3')
         label Email address
         input(type='email', name='email' placeholder='name@example.com', required, class='form-control border-secondary')        
