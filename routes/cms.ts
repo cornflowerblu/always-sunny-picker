@@ -108,7 +108,7 @@ router.post('/account/validate', async (req: Request, res: Response, next: NextF
     let time = new Date().toISOString();
     
     res.cookie('_sunnysessionauth', {
-      user_id: user.auth_users[0]?.id,
+      // user_id: user.auth_users[0]?.id,
       time: time,
       token: hashedToken,
     },

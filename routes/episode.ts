@@ -19,18 +19,31 @@ import { getAuthSession } from "../graphql/get-auth-session";
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
-const token = process.env.AUTH_TOKEN
+// const token = process.env.AUTH_TOKEN
 
 // Blank entry form protected by query string auth
 router.get('/episode', async (req: Request, res: Response, next: NextFunction) => {
-  
+  let isExpired = (date: string) => date < new Date().toISOString();
+
   const shows = await getShows({}, adminRequestHeaders)
+  
+  let hash;
+  let dbEncryptToken;
+  let token;
+  let time;
+  
+  try {
+    hash = req.signedCookies._sunnysessionauth.token
+    dbEncryptToken = await getAuthSession({_eq: hash}, adminRequestHeaders)
+    token = dbEncryptToken.auth_sessions[0]?.token,
+    time = dbEncryptToken.auth_sessions[0]?.time,
+    console.log('expired?', isExpired(time));
+    console.log(time)
+  } catch (error) {
+    console.log(error);
+    return res.render('error');   
+  }
 
-  const hash = req.signedCookies._sunnysessionauth.token
-
-  const dbEncryptToken = await getAuthSession({_eq: hash}, adminRequestHeaders)
-
-  const token = dbEncryptToken.auth_sessions[0]?.token
 
   let auth;
   try {

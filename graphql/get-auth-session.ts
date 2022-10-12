@@ -9,6 +9,7 @@ const query = gql`
       id
       enc_token
       token
+      time
     }
   }`
 
@@ -21,6 +22,7 @@ type GetAuthSessionOutput = {
     id: string,
     enc_token: string,
     token: string,
+    time: string,
   }]
 }
 
