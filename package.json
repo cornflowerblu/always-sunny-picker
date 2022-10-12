@@ -15,7 +15,6 @@
     "compose:reset":"docker system prune -a --force"
   },
   "dependencies": {
-    "@clerk/clerk-js": "^4.9.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^16.0.2",
