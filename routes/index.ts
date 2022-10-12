@@ -43,7 +43,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
     res.cookie('_sunnysession', {
       id: id,
-      time: Date.now(),
+      time: new Date().toISOString(),
       season: parsed.season,
       episode: parsed.episode,
       title: "Always Sunny Episode Picker",
@@ -87,7 +87,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
   res.cookie('_sunnysession', {
     id: newId ? newId : returningId,
-    time: Date.now(),
+    time: new Date().toISOString(),
     season: season,
     episode: episode,
     title: "Always Sunny Episode Picker",

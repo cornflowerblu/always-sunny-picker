@@ -18,7 +18,7 @@ create table auth_sessions
     token     text                           not null,
     user_id   uuid                           not null,
     enc_token text                           not null,
-    date      bigint                         not null
+    time      timestamp with timezone        not null
 );
 
 create unique index auth_sessions_pkey

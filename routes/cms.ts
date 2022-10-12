@@ -17,7 +17,7 @@ router.get('/auth', async (req: Request, res: Response, next: NextFunction) => {
 
   // Set up the cookie w/ encrypted token
   res.cookie('_sunnysessionauth', {
-    time: Date.now(),
+    time: new Date().toISOString(),
     token: hashedToken,
   },
     {
@@ -105,11 +105,11 @@ router.post('/account/validate', async (req: Request, res: Response, next: NextF
     // Set up the cookie w/ encrypted token
     let token = generate();
     let hashedToken = await encryptToken(token);
-    let date = Date.now();
+    let time = new Date().toISOString();
     
     res.cookie('_sunnysessionauth', {
       user_id: user.auth_users[0]?.id,
-      time: date,
+      time: time,
       token: hashedToken,
     },
       {
@@ -117,7 +117,7 @@ router.post('/account/validate', async (req: Request, res: Response, next: NextF
         signed: true,
       })
     
-    const authSession = await createAuthSession({user_id: user.auth_users[0].id, token: token, enc_token: hashedToken, date: date }, adminRequestHeaders)
+    const authSession = await createAuthSession({user_id: user.auth_users[0].id, token: token, enc_token: hashedToken, time: time }, adminRequestHeaders)
 
     const hideTheToken = await validateToken(authSession.insert_auth_sessions_one.token, hashedToken);
 
