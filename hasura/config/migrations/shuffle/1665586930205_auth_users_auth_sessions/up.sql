@@ -5,9 +5,6 @@ create table auth_users
     password text                           not null
 );
 
-create unique index auth_users_pkey
-    on auth_users (id);
-
 create unique index auth_users_email_key
     on auth_users (email);
 
