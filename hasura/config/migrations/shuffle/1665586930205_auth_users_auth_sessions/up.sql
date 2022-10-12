@@ -16,10 +16,11 @@ create table auth_sessions
     user_id   uuid                           not null,
     enc_token text                           not null,
     time      timestamptz                    not null
-    CONSTRAINT fk_auth_user
-        FOREIGN KEY (user_id)
-            REFERENCES auth_users(id)
 );
 
 create unique index enc_token
     on auth_sessions (enc_token);
+
+[CONSTRAINT fk_auth_user]
+    FOREIGN KEY (user_id)
+    REFERENCES auth_users(id);
