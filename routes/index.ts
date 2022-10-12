@@ -8,10 +8,6 @@ import { renderEpisode } from "../lib/shows";
 
 const router = express.Router();
 
-//Test auth
-router.get('/auth', (req: Request, res: Response, next: NextFunction) => {
-  res.render('auth', {})
-})
 
 // The OG shuffler pulling from memory w/o all episodes because they vary per season
 router.get('/v1', (req: Request, res: Response, next: NextFunction) => {

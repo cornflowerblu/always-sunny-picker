@@ -5,13 +5,14 @@ import cookieParser from "cookie-parser";
 import logger from "morgan"
 import { GraphQLClient } from "graphql-request";
 import invariant from 'tiny-invariant';
-import Redis from 'ioredis';
 
 
 // Set up the app
 require('dotenv').config();
 const indexRouter = require('./routes/index');
-const episodeRouter = require('./routes/episode')
+const episodeRouter = require('./routes/episode');
+const cmsRouter = require('./routes/cms');
+
 const app = express();
 
 // Wiew engine setup
@@ -52,7 +53,7 @@ const webpHeaders = {
 app.use(express.static(path.join(__dirname, 'public'), webpHeaders));
 
 // Register routers
-app.use('/', indexRouter, episodeRouter);
+app.use('/', indexRouter, episodeRouter, cmsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req: Request, res: Response, next: NextFunction) {
