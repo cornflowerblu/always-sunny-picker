@@ -6,22 +6,22 @@ on:
       - '!main'
   workflow_dispatch:
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+test:
+  runs-on: ubuntu-latest
+  steps:
+  - name: Checkout
+    uses: actions/checkout@v3
 
-    - name: Set Cache & Node Version
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16
-        cache: 'npm'      
+  - name: Set Cache & Node Version
+    uses: actions/setup-node@v3
+    with:
+      node-version: 16
+      cache: 'npm'      
 
-    - name: Build the stack
-      run: docker-compose up -d
+  - name: Build the stack
+    run: docker-compose up -d
 
-    - name: Test
-      uses: cypress-io/github-action@v4.2.0
-      with:
-        browser: chrome
+  - name: Test
+    uses: cypress-io/github-action@v4.2.0
+    with:
+      browser: chrome
