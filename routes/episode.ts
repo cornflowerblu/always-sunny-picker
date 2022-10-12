@@ -19,7 +19,7 @@ import { getAuthSession } from "../graphql/get-auth-session";
 const router = express.Router();
 
 // Blank entry form protected by  auth
-router.get('/episode', async (req: Request, res: Response) => authService(req, res, 'create-episode').catch(error => console.log(error)));
+router.get('/episode', async (req: Request, res: Response) => await authService(req, res, 'create-episode').catch(error => console.log(error)));
 
 // This route presents a drop-down list of shows which populate seasons which populate episodes, eventually allowing for editing, filtering, etc.
 router.get('/episode/edit', async (req: Request, res: Response) => await authService(req, res, 'update-episode').catch(error => console.log(error)));
