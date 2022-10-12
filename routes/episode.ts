@@ -26,12 +26,16 @@ router.get('/episode', async (req: Request, res: Response, next: NextFunction) =
   
   const shows = await getShows({}, adminRequestHeaders)
 
-  const qsEncryptToken = req.query.auth as string
-  const dbEncryptToken = await getAuthSession({_eq: qsEncryptToken}, adminRequestHeaders)
+  const hash = req.signedCookies._sunnysessionauth.token
 
-  const token = dbEncryptToken.auth_sessions[0]?.enc_token
+  // const qsEncryptToken = req.query.auth as string
+  const dbEncryptToken = await getAuthSession({_eq: hash}, adminRequestHeaders)
 
-  if (req.signedCookies._sunnysessionauth.token === token) {
+  const token = dbEncryptToken.auth_sessions[0]?.token
+
+  const auth = await compare(token, hash)
+
+  if (auth) {
     res.render('create-episode', shows)
   } else {
     res.render('error');

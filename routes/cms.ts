@@ -130,7 +130,7 @@ router.post('/account/validate', async (req: Request, res: Response, next: NextF
       });
     }
 
-    res.redirect(`/episode?auth=${hashedToken}`)
+    res.redirect('/episode')
 
 });
 
