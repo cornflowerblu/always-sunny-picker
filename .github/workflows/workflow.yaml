@@ -56,7 +56,6 @@ jobs:
     - name: Push image to DigitalOcean Container Registry
       run: docker push --all-tags ${{ secrets.REGISTRY_NAME }}/app
 
-name: Test
 on:
   push:
     branches:
@@ -69,7 +68,6 @@ on:
       - name: Checkout
         uses: actions/checkout@v3
 
-            # Set up node and cache
       - name: Set Cache & Node Version
         uses: actions/setup-node@v3
         with:
