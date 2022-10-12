@@ -64,8 +64,6 @@ router.post('/account/new', async (req: Request, res: Response, next: NextFuncti
       error: false
     });
 
-    res.redirect("/auth");
-
   } catch (error) {
     res.render('auth', {
       message: 'There was a problem adding the user, please check the logs',
@@ -81,12 +79,23 @@ router.post('/account/validate', async (req: Request, res: Response, next: NextF
   
   const { email, password } = req.body
 
-  const user = await getAuthUser({email: {_eq: email}}, adminRequestHeaders)
+  let user;
+  try {
+    user = await getAuthUser({email: {_eq: email}}, adminRequestHeaders)
+  } catch (error) {
+    console.log(error)
+  }
 
-  const result = await validateToken(password, user.auth_users[0].password);
+  let result;
+  try {
+    result = await validateToken(password, user.auth_users[0]?.password);
+  } catch (error) {
+    console.log(error)
+    result = false;
+  }
 
   if (!result) {
-    res.render('auth', {
+    return res.render('auth', {
       title: 'Please Sign In',
       action: 'validate',
       message: 'Username or Password incorrect.',
@@ -100,7 +109,7 @@ router.post('/account/validate', async (req: Request, res: Response, next: NextF
     let date = Date.now();
     
     res.cookie('_sunnysessionauth', {
-      user_id: user.auth_users[0].id,
+      user_id: user.auth_users[0]?.id,
       time: date,
       token: hashedToken,
     },
