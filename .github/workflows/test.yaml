@@ -2,7 +2,7 @@ name: Test
 on:
   push:
     branches:
-      - '*'
+      if: github.ref_name != 'main'
   workflow_dispatch:
 jobs:
   test:
