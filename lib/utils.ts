@@ -1,3 +1,5 @@
+import { getSingleEpisode } from "../graphql/select-episode-filters/get-single-episode";
+
 export function safelyParseJSON(json: string) {
   let parsed;
 
@@ -10,3 +12,5 @@ export function safelyParseJSON(json: string) {
   return parsed;
 }
 
+export const checkEpisodeExists = async (formattedId: string, adminRequestHeaders: {}) => 
+  await getSingleEpisode({id: formattedId}, adminRequestHeaders)
