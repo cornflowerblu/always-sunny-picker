@@ -8,28 +8,8 @@ import { renderEpisode } from "../lib/shows";
 
 const router = express.Router();
 
-
-// The OG shuffler pulling from memory w/o all episodes because they vary per season
-router.get('/v1', (req: Request, res: Response, next: NextFunction) => {
-  const season = getSeasonOrEpisode(1, 15);
-  const episode = getSeasonOrEpisode(1, 10)
-
-  let random = Math.floor(Math.random() * characters.length);
-
-  const character = characters[random]
-  Promise.resolve().then(() => res.render('index',
-    {
-      title: "Always Sunny Episode Picker",
-      image: character.image,
-      name: character.name,
-      season: season,
-      episode: episode
-    })).catch(next);
-
-});
-
 // v2 pulls all content from the db via GraphQL & Hasura and is now the default index route
-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/', async (req: Request, res: Response) => {
 
   // Try to grab from cache first
   const redis = ConnectRedis();
@@ -72,7 +52,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 
   // Populate the view vars
-  const {season, episode, character} = await renderEpisode(0);
+  const { season, episode, character } = await renderEpisode(0);
 
   // Set up the session variables to store the season / episode in the user's session as ints to make my queries easier
   let returningId;
@@ -116,7 +96,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     })
 });
 
-router.get('/details', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/details', async (req: Request, res: Response) => {
   const { season, episode, image, name } = await req.signedCookies._sunnysession;
   const details = await getSeasonEpDetails({ season: season, episode: episode }, adminRequestHeaders);
 
@@ -125,14 +105,15 @@ router.get('/details', async (req: Request, res: Response, next: NextFunction) =
     description: details.episodes[0].description,
   }
 
-  Promise.resolve().then(() => res.render('index', {
+  res.render('index', {
     title: "Always Sunny Episode Picker",
     image: image,
     name: name,
     season: season,
     episode: episode,
     details: episodeDetails
-  })).catch(next);
+  })
+
 });
 
 
