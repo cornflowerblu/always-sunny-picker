@@ -2,7 +2,6 @@ import express, { NextFunction, Request, Response } from "express";
 import { createEpisode } from "../graphql/create-episode";
 import { getSeasonById } from "../graphql/get-season-id";
 import { adminRequestHeaders } from "../app";
-import invariant from "tiny-invariant";
 import { getShows } from "../graphql/select-episode-filters/get-shows";
 import { getSeasons } from "../graphql/select-episode-filters/get-seasons";
 import { getSingleShow } from "../graphql/select-episode-filters/get-single-show";
@@ -13,26 +12,20 @@ import { updateEpisode } from "../graphql/update-episode";
 import { getIdBySeasonAndEpisode } from '../graphql/get-id-by-season-and-episode'
 import { getSeasonByShowId } from "../graphql/get-seasons-by-show-id";
 import { createSeasonWithShow } from "../graphql/create-season-with-show";
+import {compare} from 'bcrypt';
+import { getAuthSession } from "../graphql/get-auth-session";
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
-const token = process.env.AUTH_TOKEN
 
-// Blank entry form protected by query string auth
-router.get('/episode', async (req: Request, res: Response, next: NextFunction) => {
-  
-  const shows = await getShows({}, adminRequestHeaders)
-  
-  invariant(token, "AUTH_TOKEN not set!")
-  if (req.query.auth === token) {
-    res.render('create-episode', shows)
-  } else {
-    res.render('error');
-  }
-});
+// Blank entry form protected by  auth
+router.get('/episode', async (req: Request, res: Response) => await authService(req, res, 'create-episode').catch(error => console.log(error)));
+
+// This route presents a drop-down list of shows which populate seasons which populate episodes, eventually allowing for editing, filtering, etc.
+router.get('/episode/edit', async (req: Request, res: Response) => await authService(req, res, 'update-episode').catch(error => console.log(error)));
 
 // The form post action and error handling
-router.post('/episode/new', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/episode/new', async (req: Request, res: Response) => {
   let shows = await getShows({}, adminRequestHeaders);
   
   const values = Object.assign({}, req.body)
@@ -121,16 +114,7 @@ router.post('/episode/new', async (req: Request, res: Response, next: NextFuncti
   }});
 
 
-// This route presents a drop-down list of shows which populate seasons which populate episodes, eventually allowing for editing, filtering, etc.
-router.get('/episode/edit', async (req: Request, res: Response, next: NextFunction) => {
-  invariant(token, "AUTH_TOKEN not set!")
-  if (req.query.auth === token) {
-    const shows = await getShows({}, adminRequestHeaders);
-    res.render('update-episode', shows);
-  } else {
-    res.render('error');
-  }
-});
+
 
 // This is the first ID that we pass back from the view which allows us to fetch the seasons associated with this show. The route is "all" because the view POSTS to it but a user may want to copy/paste the generated URL which requires a GET.
 router.all('/episode/edit/:showId', async (req: Request, res: Response, next: NextFunction) => {
@@ -184,5 +168,52 @@ router.all('/episode/edit/:showId/:seasonId/:episodeId', async (req: Request, re
 
   res.render('update-episode', showsAndSeasonsAndEpisodeDetails);
 });
+
+
+export async function authService(req: Request, res: Response, view: string) {
+  let isExpired = (date: string) => date > new Date().toISOString();
+
+  const shows = await getShows({}, adminRequestHeaders)
+  
+  let hash;
+  let dbEncryptToken;
+  let token;
+  let expired;
+
+  try {
+    hash = req.signedCookies._sunnysessionauth.token
+    dbEncryptToken = await getAuthSession({_eq: hash}, adminRequestHeaders)
+    token = dbEncryptToken.auth_sessions[0]?.token,
+    expired = isExpired(dbEncryptToken.auth_sessions[0]?.time);
+  } catch (error) {
+    console.log(error);
+    return res.render('auth', {
+      title: 'Please Sign In',
+      action: 'validate'});   
+  }
+
+
+  let auth;
+  try {
+    auth = await compare(token, hash)
+  } catch (error) {
+    console.log(error);
+    return res.render('auth', {
+      title: 'Please Sign In',
+      action: 'validate'});
+  }
+
+  if (auth && !expired) {
+    res.render(view, shows)
+  } else {
+    res.clearCookie('_sunnysessionauth');
+    return res.render('auth', {
+      title: 'Please Sign In',
+      action: 'validate'});
+  }
+}
+
+
+
 
 module.exports = router;

@@ -24,10 +24,13 @@ block entry_form
           div(class='form-group mb-3')
             label Description
             input(type='text', name='description', value= values.description, required, class='form-control border-secondary mb-3')
-            input(type='submit', value='Submit', class='btn btn-primary w-25 mb-3')
+            input(type='submit', value='Update Episode', class='btn btn-primary w-25 mb-3')
+            a(href='/episode')
+              input(type='button', value='Go Back', class='btn border-secondary w-25 mb-3 mx-3')
             p(class='text-danger') #{message}
     else
-      h1(class="display-6 pb-2") Episode Entry
+      h1(class="display-6") Episode Entry /
+        a(class="text-decoration-none" href='/episode/edit')  Edit a Show
       form(action='/episode/new', method='POST' class='was-validated')
         div(class='row')
           div(class='form-group col-6 mb-3')
@@ -50,7 +53,7 @@ block entry_form
           div(class='form-group mb-3')
             label Description
             input(type='text', name='description', required, class='form-control border-secondary mb-3')
-            input(type='submit', value='Submit', class='btn btn-primary w-25')
+            input(type='submit', value='Add New Episode', class='btn btn-primary w-25')
   #data
     if data
       .content

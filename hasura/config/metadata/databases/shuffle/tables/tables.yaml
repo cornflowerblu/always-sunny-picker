@@ -1,3 +1,5 @@
+- "!include public_auth_sessions.yaml"
+- "!include public_auth_users.yaml"
 - "!include public_characters.yaml"
 - "!include public_episodes.yaml"
 - "!include public_seasons.yaml"
