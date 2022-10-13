@@ -12,8 +12,7 @@ import { updateEpisode } from "../graphql/update-episode";
 import { getIdBySeasonAndEpisode } from '../graphql/get-id-by-season-and-episode'
 import { getSeasonByShowId } from "../graphql/get-seasons-by-show-id";
 import { createSeasonWithShow } from "../graphql/create-season-with-show";
-import {compare} from 'bcrypt';
-import { getAuthSession } from "../graphql/get-auth-session";
+import { authService } from "../lib/auth";
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
@@ -168,52 +167,5 @@ router.all('/episode/edit/:showId/:seasonId/:episodeId', async (req: Request, re
 
   res.render('update-episode', showsAndSeasonsAndEpisodeDetails);
 });
-
-
-export async function authService(req: Request, res: Response, view: string) {
-  let isExpired = (date: string) => date > new Date().toISOString();
-
-  const shows = await getShows({}, adminRequestHeaders)
-  
-  let hash;
-  let dbEncryptToken;
-  let token;
-  let expired;
-
-  try {
-    hash = req.signedCookies._sunnysessionauth.token
-    dbEncryptToken = await getAuthSession({_eq: hash}, adminRequestHeaders)
-    token = dbEncryptToken.auth_sessions[0]?.token,
-    expired = isExpired(dbEncryptToken.auth_sessions[0]?.time);
-  } catch (error) {
-    console.log(error);
-    return res.render('auth', {
-      title: 'Please Sign In',
-      action: 'validate'});   
-  }
-
-
-  let auth;
-  try {
-    auth = await compare(token, hash)
-  } catch (error) {
-    console.log(error);
-    return res.render('auth', {
-      title: 'Please Sign In',
-      action: 'validate'});
-  }
-
-  if (auth && !expired) {
-    res.render(view, shows)
-  } else {
-    res.clearCookie('_sunnysessionauth');
-    return res.render('auth', {
-      title: 'Please Sign In',
-      action: 'validate'});
-  }
-}
-
-
-
 
 module.exports = router;
