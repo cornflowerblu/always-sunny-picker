@@ -1,6 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
 import { adminRequestHeaders } from "../app";
-import { characters } from '../constants/characters'
 import { getSeasonEpDetails } from "../graphql/get-season-episode-details";
 import { v4 as uuidv4 } from 'uuid';
 import { ConnectRedis, GetQueue } from "../lib/redis";
@@ -48,8 +47,6 @@ router.get('/', async (req: Request, res: Response) => {
 
     return;
   }
-
-
 
   // Populate the view vars
   const { season, episode, character } = await renderEpisode(0);
@@ -115,11 +112,5 @@ router.get('/details', async (req: Request, res: Response) => {
   })
 
 });
-
-
-// Functions leveraged in the controllers above
-function getSeasonOrEpisode(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min) + min);
-}
 
 module.exports = router;
