@@ -8,10 +8,10 @@ import { getIdBySeasonAndEpisode } from '../graphql/get-id-by-season-and-episode
 import { authService } from "../lib/auth";
 import { checkEpisodeExists, episodeFilter, updateIfExists } from "../lib/utils";
 
-// "Global" variables in scope for the entire file
+// express router
 const router = express.Router();
 
-// Blank entry form protected by  auth
+// Blank entry form protected by auth
 router.get('/episode', async (req: Request, res: Response) => await authService(req, res, 'create-episode').catch(error => console.log(error)));
 
 // This route presents a drop-down list of shows which populate seasons which populate episodes, eventually allowing for editing, filtering, etc.
@@ -19,14 +19,18 @@ router.get('/episode/edit', async (req: Request, res: Response) => await authSer
 
 // The form post action and error handling
 router.post('/episode/new', async (req: Request, res: Response) => {
-  let shows = await getShows({}, adminRequestHeaders);
+  // get shows to populate the first dropdown
+  const shows = await getShows({}, adminRequestHeaders);
   
+  // grab request data
   const values = Object.assign({}, req.body)
   const { show_id, season_number, episode_number, title, description } = req.body
   
+  // backend form validation
   if (!season_number || !episode_number || !title || !description)
     return res.render('create-episode', { values, message: 'All fields on this form are required.' });
   
+  // create a new episode if none exists
   const id = await getIdBySeasonAndEpisode({season: {_eq: season_number}, episode: {_eq: episode_number}, show_id: {_eq: show_id} }, adminRequestHeaders)
   const formattedId = id.episodes[0]?.id
 
@@ -48,6 +52,7 @@ router.post('/episode/new', async (req: Request, res: Response) => {
       }
   }
   else {
+    // update an existing episode
     try {
       const data = await updateIfExists(show_id, season_number, title, episode_number, description)
       res.render('create-episode', { data, shows: shows.shows})
@@ -89,6 +94,7 @@ router.all('/episode/edit/:showId/:seasonId', async (req: Request, res: Response
   res.render('update-episode', showsAndSeasonsAndEpisodes);
 });
 
+// populate the episode's data
 router.all('/episode/edit/:showId/:seasonId/:episodeId', async (req: Request, res: Response) => {
   const data = await episodeFilter(req);
 
