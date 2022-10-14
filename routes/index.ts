@@ -4,10 +4,70 @@ import { getSeasonEpDetails } from '../graphql/get-season-episode-details'
 import { v4 as uuidv4 } from 'uuid'
 import { ConnectRedis, GetQueue } from '../lib/redis'
 import { renderEpisode } from '../lib/shows'
+import {
+  getEpisodeDetails,
+  getSeasonEpisodes,
+  getShowSeasons,
+} from '../graphql/nextjs/shuffle'
 
 const router = express.Router()
 
-// v2 pulls all content from the db via GraphQL & Hasura and is now the default index route
+router.get('/v2', async (req: Request, res: Response) => {
+  const getNumber = (max: number, min: number): number =>
+    Math.floor(Math.random() * (max - 1) + min)
+
+  const show = await getShowSeasons(
+    {
+      id: '950e38a3-3242-44dc-8585-fd30ced6627e',
+    },
+    adminRequestHeaders
+  )
+
+  const seasonNumber = getNumber(
+    show.shows_by_pk.seasons_aggregate.aggregate.count,
+    1
+  )
+
+  const season = await getSeasonEpisodes(
+    { seasonNumber: seasonNumber },
+    adminRequestHeaders
+  )
+
+  const episodeNumber = getNumber(
+    season.seasons[0].episodes_aggregate.aggregate.count,
+    1
+  )
+
+  const episode = await getEpisodeDetails(
+    { seasonNumber: seasonNumber, episodeNumber: episodeNumber },
+    adminRequestHeaders
+  )
+
+  const characterNumber = getNumber(
+    episode.episodes[0].season.show.characters_aggregate.aggregate.count,
+    0
+  )
+
+  const { id, episode_number, title, description } = episode.episodes[0]
+
+  const character =
+    episode.episodes[0].season.show.characters_aggregate.nodes[characterNumber]
+      .first_name
+  const season_number = episode.episodes[0].season.season_number
+
+  res
+    .send({
+      id,
+      episode_number,
+      season_number,
+      title,
+      description,
+      character,
+    })
+    .status(200)
+})
+
+// pulls all content from the db via GraphQL & Hasura and is now the default index route
 router.get('/', async (req: Request, res: Response) => {
   // // Try to grab from cache first
   const redis = ConnectRedis()
