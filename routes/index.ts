@@ -98,7 +98,8 @@ router.get('/', async (req: Request, res: Response) => {
 })
 
 router.get('/details', async (req: Request, res: Response) => {
-  const { season, episode, image, name } = await req.signedCookies._sunnysession
+  const { season, episode } = await req.signedCookies._sunnysession
+
   const details = await getSeasonEpDetails(
     { season: season, episode: episode },
     adminRequestHeaders
@@ -109,14 +110,11 @@ router.get('/details', async (req: Request, res: Response) => {
     description: details.episodes[0].description,
   }
 
-  res.render('index', {
-    title: 'Always Sunny Episode Picker',
-    image: image,
-    name: name,
-    season: season,
-    episode: episode,
-    details: episodeDetails,
-  })
+  res
+    .send({
+      ...episodeDetails,
+    })
+    .status(200)
 })
 
 module.exports = router
