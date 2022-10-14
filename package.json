@@ -7,7 +7,7 @@
     "start": "node ./bin/www",
     "dev": "npm run build && npm start",
     "dev:live": "tsc-watch --onSuccess 'npm run dev'",
-    "test": "docker compose up -d && npm run prune:js && npx cypress run --browser chrome && rm -rf ./cypress/videos",
+    "test": "docker compose up -d && npx cypress run --browser chrome && rm -rf ./cypress/videos",
     "test:ui": "docker compose up -d && npm run prune:js && npx cypress open",
     "prune:js": "rm -rf **/*.js && rm -rf cypress/**/*.js && rm -f cypress.config.js",
     "compose:up": "docker compose up -d",
