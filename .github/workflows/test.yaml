@@ -18,6 +18,5 @@ jobs:
 
     - name: Build the stack & test
       run: |
-        docker-compose up -d
         npm i -g cypress
         npm run test
