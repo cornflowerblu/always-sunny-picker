@@ -19,4 +19,5 @@ jobs:
     - name: Build the stack & test
       run: |
         npm i -g cypress
+        npm i -g typescript
         npm run test
