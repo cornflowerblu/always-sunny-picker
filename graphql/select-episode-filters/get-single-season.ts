@@ -1,6 +1,7 @@
-import { gqlClient } from '../../app'
+import InitGraphQL from '../../lib/graphql'
 import { gql } from 'graphql-request'
 
+const client = InitGraphQL();
 
 const query = gql`
   query GetSingleSeason($id: uuid!) {
@@ -23,7 +24,7 @@ type GetSingleSeasonResponse = {
 }
 
 export const getSingleSeason = async (variables: GetSingleSeasonInput, requestHeaders: {}) =>
-  <GetSingleSeasonResponse>await gqlClient.request(query, variables, requestHeaders)
+  <GetSingleSeasonResponse>await client.gqlClient.request(query, variables, requestHeaders)
 
 
 

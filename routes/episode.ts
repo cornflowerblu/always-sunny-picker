@@ -1,16 +1,12 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import { getSeasonById } from "../graphql/get-season-id";
 import { adminRequestHeaders } from "../app";
 import { getShows } from "../graphql/select-episode-filters/get-shows";
-import { getSeasons } from "../graphql/select-episode-filters/get-seasons";
 import { getSingleShow } from "../graphql/select-episode-filters/get-single-show";
-import { getSingleSeason } from "../graphql/select-episode-filters/get-single-season";
-import { getEpisodesBySeason } from "../graphql/select-episode-filters/get-episodes-by-season";
-import { getSingleEpisode } from "../graphql/select-episode-filters/get-single-episode";
 import { updateEpisode } from "../graphql/update-episode";
 import { getIdBySeasonAndEpisode } from '../graphql/get-id-by-season-and-episode'
 import { authService } from "../lib/auth";
-import { checkEpisodeExists, updateIfExists } from "../lib/utils";
+import { checkEpisodeExists, episodeFilter, updateIfExists } from "../lib/utils";
 
 // "Global" variables in scope for the entire file
 const router = express.Router();
@@ -65,57 +61,44 @@ router.post('/episode/new', async (req: Request, res: Response) => {
     }
 }});
 
-
-
-
 // This is the first ID that we pass back from the view which allows us to fetch the seasons associated with this show. The route is "all" because the view POSTS to it but a user may want to copy/paste the generated URL which requires a GET.
-router.all('/episode/edit/:showId', async (req: Request, res: Response, next: NextFunction) => {
-  const shows = await getShows({}, adminRequestHeaders);
-  const singleShow = await getSingleShow({ id: req.params.showId }, adminRequestHeaders);
-  const seasons = await getSeasons({ showId: req.params.showId }, adminRequestHeaders);
+router.all('/episode/edit/:showId', async (req: Request, res: Response) => {
+  const data = await episodeFilter(req)
+  
   const showsAndSeasons = {
-    seasons: seasons.seasons,
-    singleShow: singleShow.shows_by_pk,
-    shows: shows.shows
+    seasons: data.seasons.seasons,
+    singleShow: data.singleShow.shows_by_pk,
+    shows: data.shows.shows
   }
 
   res.render('update-episode', showsAndSeasons);
 });
 
 // Moving down the chain, we now know the show and the season so we can fetch the episodes. 
-router.all('/episode/edit/:showId/:seasonId', async (req: Request, res: Response, next: NextFunction) => {
-  const singleShow = await getSingleShow({ id: req.params.showId }, adminRequestHeaders);
-  const singleSeason = await getSingleSeason({ id: req.params.seasonId }, adminRequestHeaders);
-  const shows = await getShows({}, adminRequestHeaders);
-  const seasons = await getSeasons({ showId: req.params.showId }, adminRequestHeaders);
-  const episodes = await getEpisodesBySeason({ seasonId: req.params.seasonId }, adminRequestHeaders);
+router.all('/episode/edit/:showId/:seasonId', async (req: Request, res: Response) => {
+  const data = await episodeFilter(req);
 
   const showsAndSeasonsAndEpisodes = {
-    seasons: seasons.seasons,
-    singleShow: singleShow.shows_by_pk,
-    episodes: episodes.episodes,
-    singleSeason: singleSeason.seasons_by_pk,
-    shows: shows.shows
+    seasons: data.seasons.seasons,
+    singleShow: data.singleShow.shows_by_pk,
+    episodes: data.episodes.episodes,
+    singleSeason: data.singleSeason.seasons_by_pk,
+    shows: data.shows.shows
   }
 
   res.render('update-episode', showsAndSeasonsAndEpisodes);
 });
 
-router.all('/episode/edit/:showId/:seasonId/:episodeId', async (req: Request, res: Response, next: NextFunction) => {
-  const episode = await getSingleEpisode({ id: req.params.episodeId }, adminRequestHeaders);
-  const singleShow = await getSingleShow({ id: req.params.showId }, adminRequestHeaders);
-  const singleSeason = await getSingleSeason({ id: req.params.seasonId }, adminRequestHeaders);
-  const shows = await getShows({}, adminRequestHeaders);
-  const seasons = await getSeasons({ showId: req.params.showId }, adminRequestHeaders);
-  const episodes = await getEpisodesBySeason({ seasonId: req.params.seasonId }, adminRequestHeaders);
+router.all('/episode/edit/:showId/:seasonId/:episodeId', async (req: Request, res: Response) => {
+  const data = await episodeFilter(req);
 
   const showsAndSeasonsAndEpisodeDetails = {
-    seasons: seasons.seasons,
-    singleShow: singleShow.shows_by_pk,
-    episodes: episodes.episodes,
-    singleSeason: singleSeason.seasons_by_pk,
-    singleEpisode: episode.episodes_by_pk,
-    shows: shows.shows
+    seasons: data.seasons.seasons,
+    singleShow: data.singleShow.shows_by_pk,
+    episodes: data.episodes.episodes,
+    singleSeason: data.singleSeason.seasons_by_pk,
+    singleEpisode: data.episode.episodes_by_pk,
+    shows: data.shows.shows
   }
 
   res.render('update-episode', showsAndSeasonsAndEpisodeDetails);
