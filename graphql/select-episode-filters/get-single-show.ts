@@ -1,7 +1,7 @@
 import InitGraphQL from '../../lib/graphql'
 import { gql } from 'graphql-request'
 
-const client = InitGraphQL();
+const client = InitGraphQL()
 
 const query = gql`
   query GetOneShow($id: uuid!) {
@@ -9,22 +9,24 @@ const query = gql`
       id
       show_name
     }
-  }`
+  }
+`
 
 type GetShowInput = {
-  id: string,
+  id: string
 }
 
 type GetShowResponse = {
-  shows_by_pk:
-  {
-    id: string,
-    show_name: string,
+  shows_by_pk: {
+    id: string
+    show_name: string
   }
 }
 
-export const getSingleShow = async (variables: GetShowInput, requestHeaders: {}) =>
-  <GetShowResponse>await client.gqlClient.request(query, variables, requestHeaders)
-
-
-
+export const getSingleShow = async (
+  variables: GetShowInput,
+  requestHeaders: {}
+) =>
+  <GetShowResponse>(
+    await client.gqlClient.request(query, variables, requestHeaders)
+  )

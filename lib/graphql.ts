@@ -1,24 +1,22 @@
-import { GraphQLClient } from "graphql-request";
-import invariant from "tiny-invariant";
+import { GraphQLClient } from 'graphql-request'
+import invariant from 'tiny-invariant'
 
+export default function InitGraphQL() {
+  require('dotenv').config()
 
-export default function InitGraphQL(){
-  require('dotenv').config();
-  
   const graphql = {
     url: process.env.GRAPHQL_URL,
-    adminSecret: process.env.GRAPHQL_ADMIN_SECRET
+    adminSecret: process.env.GRAPHQL_ADMIN_SECRET,
   }
-  
-  invariant(graphql.url, 'GRAPHQL URL NOT SET!');
-  const gqlClient = new GraphQLClient(graphql.url);
-  
-  invariant(graphql.adminSecret, 'GRAPHQL SECRET NOT SET!');
+
+  invariant(graphql.url, 'GRAPHQL URL NOT SET!')
+  const gqlClient = new GraphQLClient(graphql.url)
+
+  invariant(graphql.adminSecret, 'GRAPHQL SECRET NOT SET!')
   const adminRequestHeaders = {
     'Content-Type': 'application/json',
-    'x-hasura-admin-secret': graphql.adminSecret
-  };
+    'x-hasura-admin-secret': graphql.adminSecret,
+  }
 
   return { gqlClient, adminRequestHeaders }
 }
-

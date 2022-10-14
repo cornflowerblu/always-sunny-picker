@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 
 x-common-variables: &common-variables
   REDIS_URL: redis://default:redispw@redis:6379
@@ -7,74 +7,74 @@ x-common-variables: &common-variables
 
 services:
   web:
-    image: always-sunny-picker 
+    image: always-sunny-picker
     build: .
-    ports: 
-      - "3000:3000"
-    environment: 
+    ports:
+      - '3000:3000'
+    environment:
       <<: *common-variables
       AUTH_TOKEN: leLvvwyorNdFjbeAfVQxGuTJgUbsxc
       COOKIE_SECRET: grYCuerNAVDGVttphyyooupFFkqTDK
       NODE_ENV: production
-    command: ["npm", "start"]
+    command: ['npm', 'start']
 
   worker-add-sessions:
     image: always-sunny-picker
     build: .
-    environment: *common-variables    
-    command: ["node", "./workers/worker-add-sessions.js"] 
+    environment: *common-variables
+    command: ['node', './workers/worker-add-sessions.js']
     depends_on:
       - web
-  
+
   worker-preload:
     image: always-sunny-picker
-    build: .    
+    build: .
     environment: *common-variables
-    command: ["node", "./workers/worker-preload.js"]    
+    command: ['node', './workers/worker-preload.js']
     depends_on:
-      - web    
-  
+      - web
+
   redis:
     image: redis
-    ports: 
-      - "6379:6379"
-    volumes: 
+    ports:
+      - '6379:6379'
+    volumes:
       - cache:/data
     environment:
       - REDIS_PASSWORD=redispw
-  
+
   db:
     image: postgres
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       POSTGRES_PASSWORD: goares
       POSTGRES_DB: shuffle
-  
+
   graphql-engine:
     image: hasura/graphql-engine:v2.12.0
     ports:
-      - "8080:8080"
+      - '8080:8080'
     depends_on:
-      - "db"
+      - 'db'
     restart: always
     environment:
-      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:goares@db:5432/shuffle      
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:goares@db:5432/shuffle
       DATABASE_URL: postgres://postgres:goares@db:5432/shuffle
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
-      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLE_CONSOLE: 'true'
+      HASURA_GRAPHQL_DEV_MODE: 'true'
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
-  
+
   graphql-cli:
     image: ubuntu
-    volumes: 
+    volumes:
       - ./hasura/init.sh:/init.sh
       - ./hasura/config:/hasura
     entrypoint: sh -c "/init.sh"
     depends_on:
-      - "db"
-      - "graphql-engine"
+      - 'db'
+      - 'graphql-engine'
 
 volumes:
   cache:
