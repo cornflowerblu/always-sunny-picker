@@ -21,32 +21,26 @@ router.get('/v2', async (req: Request, res: Response) => {
 
   const result = await shuffle()
 
-  let returningId
-  let newId
-
   if (req.signedCookies._sunnysession) {
-    returningId = req.signedCookies._sunnysession.id
+    let sessionId = req.signedCookies._sunnysession.id
+    redis.publish('episode-cache', JSON.stringify({ id: sessionId }))
+    return res.send(result).status(200)
   } else {
-    newId = uuidv4()
+    let sessionId = uuidv4()
+    res.cookie(
+      '_sunnysession',
+      {
+        id: sessionId,
+        time: new Date().toISOString(),
+      },
+      {
+        secure: true,
+        signed: true,
+      }
+    )
+    redis.publish('episode-cache', JSON.stringify({ id: sessionId }))
+    res.send(result).status(200)
   }
-
-  let sessionId = newId ? newId : returningId
-
-  res.cookie(
-    '_sunnysession',
-    {
-      id: sessionId,
-      time: new Date().toISOString(),
-    },
-    {
-      secure: true,
-      signed: true,
-    }
-  )
-
-  redis.publish('episode-cache', JSON.stringify({ id: sessionId }))
-
-  res.send(result).status(200)
 })
 
 // pulls all content from the db via GraphQL & Hasura and is now the default index route
