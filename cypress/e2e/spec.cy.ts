@@ -18,8 +18,7 @@ describe('main page', () => {
       .document()
       .get('h1')
       .contains('Oops!')
-      .contains('Go Home')
-      .click()
+    cy.contains('Go Home').click()
   })
 })
 
