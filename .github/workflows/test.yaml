@@ -16,10 +16,8 @@ jobs:
         node-version: 16
         cache: 'npm'      
 
-    - name: Build the stack
-      run: docker-compose up -d
-
-    - name: Test
-      uses: cypress-io/github-action@v4.2.0
-      with:
-        browser: chrome
+    - name: Build the stack & test
+      run: |
+        mv local.env .env
+        npm install
+        npm run test
