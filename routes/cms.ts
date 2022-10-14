@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import { hash, genSalt, compare } from "bcrypt";
 import { generate } from "randomstring";
 import invariant from "tiny-invariant";
