@@ -71,8 +71,6 @@ router.get('/', async (req: Request, res: Response) => {
       }
     )
 
-    redis.publish('channel', JSON.stringify(req.signedCookies._sunnysession))
-
     res.render('index', {
       title: 'Always Sunny Episode Picker',
       image: parsed.image,
@@ -117,7 +115,6 @@ router.get('/', async (req: Request, res: Response) => {
 
   // Connect to redis (if available) and queue up the cookie data
   const session = JSON.stringify(req.signedCookies._sunnysession)
-  redis.publish('channel', session)
   redis.publish('episode-cache', session)
 
   res.render('index', {
