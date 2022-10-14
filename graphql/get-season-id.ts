@@ -1,6 +1,7 @@
-import { gqlClient } from '../app'
+import InitGraphQL from '../lib/graphql';
 import { gql } from 'graphql-request'
 
+const client = InitGraphQL();
 
 const query = gql`
   query GetSeasonIdByNumber($seasonNumber: Int!) {
@@ -22,4 +23,4 @@ type GetSeasonIdByNumberResponse = {
 }
 
 export const getSeasonById = async (variables: GetSeasonIdByNumberInput, requestHeaders: {}) =>
-  <GetSeasonIdByNumberResponse>await gqlClient.request(query, variables, requestHeaders)
+  <GetSeasonIdByNumberResponse>await client.gqlClient.request(query, variables, requestHeaders)

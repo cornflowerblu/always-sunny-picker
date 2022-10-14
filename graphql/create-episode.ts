@@ -1,6 +1,7 @@
-import { gqlClient } from '../app'
+import InitGraphQL from '../lib/graphql'
 import { gql } from 'graphql-request'
 
+const client = InitGraphQL();
 
 const query = gql`
   mutation AddEpisode($episode: episodes_insert_input!) {
@@ -48,4 +49,4 @@ type AddEpisodeOutput = {
 }
 
 export const createEpisode = async (variables: AddEpisodeInput, requestHeaders: {}) =>
-  <AddEpisodeOutput>await gqlClient.request(query, variables, requestHeaders)
+  <AddEpisodeOutput>await client.gqlClient.request(query, variables, requestHeaders)
