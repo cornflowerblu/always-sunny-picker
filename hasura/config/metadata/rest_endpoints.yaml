@@ -1,1 +1,9 @@
-[]
+- comment: ""
+  definition:
+    query:
+      collection_name: allowed-queries
+      query_name: Delete Auth User by Email
+  methods:
+    - DELETE
+  name: Delete Auth User by Email
+  url: :_eq

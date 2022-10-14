@@ -1,1 +1,10 @@
-[]
+- name: allowed-queries
+  definition:
+    queries:
+      - name: Delete Auth User by Email
+        query: |
+          mutation DeleteTestUser ($_eq: String!) {
+            delete_auth_users(where: {email:{_eq:$_eq}}) {
+              affected_rows
+            }
+          }

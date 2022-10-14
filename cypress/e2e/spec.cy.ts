@@ -54,4 +54,15 @@ describe('admin/cms', () => {
 
     cy.get('form').submit().document().get('h1').contains('Episode')
   })
+
+  it('deletes the admin user', () => {
+    cy.request({
+      method: 'DELETE',
+      url: Cypress.env('REST_URL') + '/roger2@gmail.com',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-hasura-admin-secret': Cypress.env('GRAPHQL_ADMIN_SECRET'),
+      },
+    })
+  })
 })
