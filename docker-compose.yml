@@ -6,7 +6,8 @@ x-common-variables: &common-variables
   GRAPHQL_URL: http://graphql-engine:8080/v1/graphql
 
 services:
-  web: 
+  web:
+    image: always-sunny-picker 
     build: .
     ports: 
       - "3000:3000"
@@ -18,14 +19,20 @@ services:
     command: ["npm", "start"]
 
   worker-add-sessions:
+    image: always-sunny-picker
     build: .
     environment: *common-variables    
     command: ["node", "./workers/worker-add-sessions.js"] 
+    depends_on:
+      - web
   
   worker-preload:
-    build: .
+    image: always-sunny-picker
+    build: .    
     environment: *common-variables
     command: ["node", "./workers/worker-preload.js"]    
+    depends_on:
+      - web    
   
   redis:
     image: redis
