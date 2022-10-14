@@ -54,6 +54,10 @@ router.get('/v2', async (req: Request, res: Response) => {
     episode.episodes[0].season.show.characters_aggregate.nodes[characterNumber]
       .first_name
   const season_number = episode.episodes[0].season.season_number
+  const show_name = episode.episodes[0].season.show.show_name
+  const character_image =
+    episode.episodes[0].season.show.characters_aggregate.nodes[characterNumber]
+      .image_url
 
   res
     .send({
@@ -63,6 +67,8 @@ router.get('/v2', async (req: Request, res: Response) => {
       title,
       description,
       character,
+      character_image,
+      show_name,
     })
     .status(200)
 })

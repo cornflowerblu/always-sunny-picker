@@ -42,6 +42,7 @@ export type EpisodeDetailsOutput = {
       season: {
         season_number: number
         show: {
+          show_name: string
           characters_aggregate: {
             aggregate: {
               count: number
