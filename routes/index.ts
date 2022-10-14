@@ -35,8 +35,6 @@ router.get('/', async (req: Request, res: Response) => {
       }
     )
 
-    redis.publish('channel', JSON.stringify(req.signedCookies._sunnysession))
-
     res
       .send({
         title: 'Always Sunny Episode Picker',
@@ -46,6 +44,8 @@ router.get('/', async (req: Request, res: Response) => {
         episode: parsed.episode,
       })
       .status(200)
+
+    redis.publish('channel', JSON.stringify(req.signedCookies._sunnysession))
 
     return
   }
