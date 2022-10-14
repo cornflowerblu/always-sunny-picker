@@ -10,22 +10,23 @@ describe('main page', () => {
     cy.contains('Shuffle').click()
     cy.contains('Details').click().document().get('h3').should('exist')
   })
+
+  it('should throw the error page when needed and allow the user to navigate home', () => {
+    cy.visit('localhost:3000/sdjhfkjshdfkjshdfkjsdhf', {
+      failOnStatusCode: false,
+    })
+      .document()
+      .get('h1')
+      .contains('Oops!')
+      .contains('Go Home')
+      .click()
+  })
 })
 
 describe('episode entry', () => {
   it('redirects to login without auth', () => {
     cy.visit('localhost:3000/episode').document().get('h1').contains('Sign In')
   })
-})
-
-it('should throw the error page when needed and allow the user to navigate home', () => {
-  cy.visit('localhost:3000/sdjhfkjshdfkjshdfkjsdhf', {
-    failOnStatusCode: false,
-  })
-    .document()
-    .get('h1')
-    .contains('Oops!')
-  cy.contains('Go Home').click()
 })
 
 describe('admin/cms', () => {
