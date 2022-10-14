@@ -19,19 +19,19 @@ services:
       NODE_ENV: production
     command: ['npm', 'start']
 
-  worker-add-sessions:
-    image: always-sunny-picker
-    build: .
-    environment: *common-variables
-    command: ['node', './workers/worker-add-sessions.js']
-    depends_on:
-      - web
-
   worker-preload:
     image: always-sunny-picker
     build: .
     environment: *common-variables
     command: ['node', './workers/worker-preload.js']
+    depends_on:
+      - web
+
+  worker-preload-v2:
+    image: always-sunny-picker
+    build: .
+    environment: *common-variables
+    command: ['node', './workers/worker-preload-v2.js']
     depends_on:
       - web
 

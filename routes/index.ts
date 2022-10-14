@@ -23,7 +23,7 @@ router.get('/v2', async (req: Request, res: Response) => {
 
   if (req.signedCookies._sunnysession) {
     let sessionId = req.signedCookies._sunnysession.id
-    redis.publish('episode-cache', JSON.stringify({ id: sessionId }))
+    redis.publish('episode-cache-v2', JSON.stringify({ id: sessionId }))
     return res.send(result).status(200)
   } else {
     let sessionId = uuidv4()
@@ -38,7 +38,7 @@ router.get('/v2', async (req: Request, res: Response) => {
         signed: true,
       }
     )
-    redis.publish('episode-cache', JSON.stringify({ id: sessionId }))
+    redis.publish('episode-cache-v2', JSON.stringify({ id: sessionId }))
     res.send(result).status(200)
   }
 })

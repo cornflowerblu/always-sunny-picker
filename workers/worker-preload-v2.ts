@@ -1,9 +1,9 @@
 import { PubSub, PushToQueue } from '../lib/redis'
+import { shuffle } from '../lib/shuffle'
 import { safelyParseJSON } from '../lib/utils'
-import { renderEpisode } from '../lib/shows'
 
 // Redis queue of episodes
-const { subscriber, producer } = PubSub('episode-cache')
+const { subscriber, producer } = PubSub('episode-cache-v2')
 
 subscriber.on('message', async (channel, message) => {
   const { id } = safelyParseJSON(message)
@@ -16,13 +16,7 @@ subscriber.on('message', async (channel, message) => {
   const key = id
 
   for (let i = 0; i <= 10; i++) {
-    const { season, episode, character } = await renderEpisode(0)
-    const result = {
-      image: character.image_url,
-      name: character.first_name,
-      season: season,
-      episode: episode,
-    }
+    const result = await shuffle()
     await PushToQueue(producer, key, { params: result })
   }
 })
