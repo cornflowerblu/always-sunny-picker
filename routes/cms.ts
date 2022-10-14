@@ -11,7 +11,7 @@ const router = express.Router();
 const token = process.env.AUTH_TOKEN
 
 //Log in screen
-router.get('/auth', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/auth', async (req: Request, res: Response) => {
   
   let hashedToken = await encryptToken(generate());
 
@@ -32,7 +32,7 @@ router.get('/auth', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 //Create Account screen
-router.get('/admin', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/admin', async (req: Request, res: Response) => {
   
   invariant(token, "AUTH_TOKEN not set!")
   
@@ -46,7 +46,7 @@ router.get('/admin', async (req: Request, res: Response, next: NextFunction) => 
   }
 });
 
-router.post('/account/new', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/account/new', async (req: Request, res: Response) => {
 
   const { email, password } = req.body
 
@@ -74,7 +74,7 @@ router.post('/account/new', async (req: Request, res: Response, next: NextFuncti
 
 });
 
-router.post('/account/validate', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/account/validate', async (req: Request, res: Response) => {
   
   const { email, password } = req.body
 
