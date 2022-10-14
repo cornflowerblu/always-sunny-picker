@@ -16,6 +16,16 @@ router.get('/v2', async (req: Request, res: Response) => {
   const getNumber = (max: number, min: number): number =>
     Math.floor(Math.random() * (max - 1) + min)
 
+  const redis = ConnectRedis()
+  const cacheId = req.signedCookies._sunnysession?.id
+  const list = await GetQueue(cacheId, redis)
+
+  if (list.length > 0) {
+    const parsed = JSON.parse(list[0])
+    await redis.lpop(cacheId)
+    return res.send(parsed).status(200)
+  }
+
   const show = await getShowSeasons(
     {
       id: '950e38a3-3242-44dc-8585-fd30ced6627e',
@@ -53,24 +63,51 @@ router.get('/v2', async (req: Request, res: Response) => {
   const character =
     episode.episodes[0].season.show.characters_aggregate.nodes[characterNumber]
       .first_name
-  const season_number = episode.episodes[0].season.season_number
-  const show_name = episode.episodes[0].season.show.show_name
+
   const character_image =
     episode.episodes[0].season.show.characters_aggregate.nodes[characterNumber]
       .image_url
 
-  res
-    .send({
-      id,
-      episode_number,
-      season_number,
-      title,
-      description,
-      character,
-      character_image,
-      show_name,
-    })
-    .status(200)
+  const season_number = episode.episodes[0].season.season_number
+  const show_name = episode.episodes[0].season.show.show_name
+
+  const result = {
+    id,
+    episode_number,
+    season_number,
+    title,
+    description,
+    character,
+    character_image,
+    show_name,
+  }
+
+  let returningId
+  let newId
+
+  if (req.signedCookies._sunnysession) {
+    returningId = req.signedCookies._sunnysession.id
+  } else {
+    newId = uuidv4()
+  }
+
+  let sessionId = newId ? newId : returningId
+
+  res.cookie(
+    '_sunnysession',
+    {
+      id: sessionId,
+      time: new Date().toISOString(),
+    },
+    {
+      secure: true,
+      signed: true,
+    }
+  )
+
+  redis.publish('episode-cache', JSON.stringify({ id: sessionId }))
+
+  res.send(result).status(200)
 })
 
 // pulls all content from the db via GraphQL & Hasura and is now the default index route
