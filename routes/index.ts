@@ -9,7 +9,7 @@ const router = express.Router()
 
 // v2 pulls all content from the db via GraphQL & Hasura and is now the default index route
 router.get('/', async (req: Request, res: Response) => {
-  // Try to grab from cache first
+  // // Try to grab from cache first
   const redis = ConnectRedis()
   const id = req.signedCookies._sunnysession?.id
   const list = await GetQueue(id, redis)
@@ -37,13 +37,15 @@ router.get('/', async (req: Request, res: Response) => {
 
     redis.publish('channel', JSON.stringify(req.signedCookies._sunnysession))
 
-    res.render('index', {
-      title: 'Always Sunny Episode Picker',
-      image: parsed.image,
-      name: parsed.name,
-      season: parsed.season,
-      episode: parsed.episode,
-    })
+    res
+      .send({
+        title: 'Always Sunny Episode Picker',
+        image: parsed.image,
+        name: parsed.name,
+        season: parsed.season,
+        episode: parsed.episode,
+      })
+      .status(200)
 
     return
   }
@@ -62,6 +64,11 @@ router.get('/', async (req: Request, res: Response) => {
     newId = uuidv4()
   }
 
+  // Connect to redis (if available) and queue up the cookie data
+  const session = JSON.stringify(req.signedCookies._sunnysession)
+  redis.publish('channel', session)
+  redis.publish('episode-cache', session)
+
   res.cookie(
     '_sunnysession',
     {
@@ -79,18 +86,15 @@ router.get('/', async (req: Request, res: Response) => {
     }
   )
 
-  // Connect to redis (if available) and queue up the cookie data
-  const session = JSON.stringify(req.signedCookies._sunnysession)
-  redis.publish('channel', session)
-  redis.publish('episode-cache', session)
-
-  res.render('index', {
-    title: 'Always Sunny Episode Picker',
-    image: character.image_url,
-    name: character.first_name,
-    season: season,
-    episode: episode,
-  })
+  res
+    .send({
+      title: 'Always Sunny Episode Picker',
+      image: character.image_url,
+      name: character.first_name,
+      season: season,
+      episode: episode,
+    })
+    .status(200)
 })
 
 router.get('/details', async (req: Request, res: Response) => {
