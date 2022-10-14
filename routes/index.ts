@@ -45,7 +45,7 @@ router.get('/v2', async (req: Request, res: Response) => {
 
 // pulls all content from the db via GraphQL & Hasura and is now the default index route
 router.get('/', async (req: Request, res: Response) => {
-  // // Try to grab from cache first
+  // Try to grab from cache first
   const redis = ConnectRedis()
   const id = req.signedCookies._sunnysession?.id
   const list = await GetQueue(id, redis)
@@ -71,17 +71,15 @@ router.get('/', async (req: Request, res: Response) => {
       }
     )
 
-    res
-      .send({
-        title: 'Always Sunny Episode Picker',
-        image: parsed.image,
-        name: parsed.name,
-        season: parsed.season,
-        episode: parsed.episode,
-      })
-      .status(200)
-
     redis.publish('channel', JSON.stringify(req.signedCookies._sunnysession))
+
+    res.render('index', {
+      title: 'Always Sunny Episode Picker',
+      image: parsed.image,
+      name: parsed.name,
+      season: parsed.season,
+      episode: parsed.episode,
+    })
 
     return
   }
@@ -100,11 +98,6 @@ router.get('/', async (req: Request, res: Response) => {
     newId = uuidv4()
   }
 
-  // Connect to redis (if available) and queue up the cookie data
-  const session = JSON.stringify(req.signedCookies._sunnysession)
-  redis.publish('channel', session)
-  redis.publish('episode-cache', session)
-
   res.cookie(
     '_sunnysession',
     {
@@ -122,20 +115,22 @@ router.get('/', async (req: Request, res: Response) => {
     }
   )
 
-  res
-    .send({
-      title: 'Always Sunny Episode Picker',
-      image: character.image_url,
-      name: character.first_name,
-      season: season,
-      episode: episode,
-    })
-    .status(200)
+  // Connect to redis (if available) and queue up the cookie data
+  const session = JSON.stringify(req.signedCookies._sunnysession)
+  redis.publish('channel', session)
+  redis.publish('episode-cache', session)
+
+  res.render('index', {
+    title: 'Always Sunny Episode Picker',
+    image: character.image_url,
+    name: character.first_name,
+    season: season,
+    episode: episode,
+  })
 })
 
 router.get('/details', async (req: Request, res: Response) => {
-  const { season, episode } = await req.signedCookies._sunnysession
-
+  const { season, episode, image, name } = await req.signedCookies._sunnysession
   const details = await getSeasonEpDetails(
     { season: season, episode: episode },
     adminRequestHeaders
@@ -146,11 +141,14 @@ router.get('/details', async (req: Request, res: Response) => {
     description: details.episodes[0].description,
   }
 
-  res
-    .send({
-      ...episodeDetails,
-    })
-    .status(200)
+  res.render('index', {
+    title: 'Always Sunny Episode Picker',
+    image: image,
+    name: name,
+    season: season,
+    episode: episode,
+    details: episodeDetails,
+  })
 })
 
 module.exports = router
