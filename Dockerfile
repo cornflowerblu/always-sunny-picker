@@ -4,6 +4,8 @@ COPY . .
 RUN npm ci --legacy-peer-deps
 RUN npm run build
 RUN rm -rf node_modules
+RUN rm **/*.ts && rm tsconfig.json
+RUN rm app.ts
 
 # Production
 FROM node:lts-alpine
