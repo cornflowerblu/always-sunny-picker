@@ -22,6 +22,12 @@ describe('main page', () => {
   })
 })
 
+describe('v2', () => {
+  it('loads the v2 api', () => {
+    cy.request('localhost:3000/v2').should('exist')
+  })
+})
+
 describe('episode entry', () => {
   it('redirects to login without auth', () => {
     cy.visit('localhost:3000/episode').document().get('h1').contains('Sign In')

@@ -4,10 +4,46 @@ import { getSeasonEpDetails } from '../graphql/get-season-episode-details'
 import { v4 as uuidv4 } from 'uuid'
 import { ConnectRedis, GetQueue } from '../lib/redis'
 import { renderEpisode } from '../lib/shows'
+import { shuffle } from '../lib/shuffle'
 
 const router = express.Router()
 
-// v2 pulls all content from the db via GraphQL & Hasura and is now the default index route
+router.get('/v2', async (req: Request, res: Response) => {
+  const redis = ConnectRedis()
+  const cacheId = req.signedCookies._sunnysession?.id
+  const list = await GetQueue(cacheId, redis)
+
+  if (list.length > 0) {
+    const parsed = JSON.parse(list[0])
+    await redis.lpop(cacheId)
+    return res.send(parsed).status(200)
+  }
+
+  const result = await shuffle()
+
+  if (req.signedCookies._sunnysession) {
+    let sessionId = req.signedCookies._sunnysession.id
+    redis.publish('episode-cache-v2', JSON.stringify({ id: sessionId }))
+    return res.send(result).status(200)
+  } else {
+    let sessionId = uuidv4()
+    res.cookie(
+      '_sunnysession',
+      {
+        id: sessionId,
+        time: new Date().toISOString(),
+      },
+      {
+        secure: true,
+        signed: true,
+      }
+    )
+    redis.publish('episode-cache-v2', JSON.stringify({ id: sessionId }))
+    res.send(result).status(200)
+  }
+})
+
+// pulls all content from the db via GraphQL & Hasura and is now the default index route
 router.get('/', async (req: Request, res: Response) => {
   // Try to grab from cache first
   const redis = ConnectRedis()
@@ -34,8 +70,6 @@ router.get('/', async (req: Request, res: Response) => {
         signed: true,
       }
     )
-
-    redis.publish('channel', JSON.stringify(req.signedCookies._sunnysession))
 
     res.render('index', {
       title: 'Always Sunny Episode Picker',
@@ -81,7 +115,6 @@ router.get('/', async (req: Request, res: Response) => {
 
   // Connect to redis (if available) and queue up the cookie data
   const session = JSON.stringify(req.signedCookies._sunnysession)
-  redis.publish('channel', session)
   redis.publish('episode-cache', session)
 
   res.render('index', {
