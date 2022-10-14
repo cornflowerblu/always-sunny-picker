@@ -1,6 +1,7 @@
-import { gqlClient } from '../../app'
+import InitGraphQL from '../../lib/graphql'
 import { gql } from 'graphql-request'
 
+const client = InitGraphQL();
 
 const query = gql`
   query GetOneEpisode($id: uuid!) {
@@ -33,7 +34,7 @@ type GetEpisodeResponse = {
 }
 
 export const getSingleEpisode = async (variables: GetEpisodeInput, requestHeaders: {}) =>
-  <GetEpisodeResponse>await gqlClient.request(query, variables, requestHeaders)
+  <GetEpisodeResponse>await client.gqlClient.request(query, variables, requestHeaders)
 
 
 
