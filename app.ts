@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 import { GraphQLClient } from 'graphql-request'
 import invariant from 'tiny-invariant'
+import cors from 'cors'
 
 // Set up the app
 require('dotenv').config()
@@ -22,6 +23,7 @@ app.set('view engine', 'pug')
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.use(cors())
 
 // Cookies!
 const cookieSecret = process.env.COOKIE_SECRET

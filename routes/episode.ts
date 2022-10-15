@@ -11,6 +11,13 @@ import { checkEpisodeExists, episodeFilter, updateIfExists } from '../lib/utils'
 // express router
 const router = express.Router()
 
+//v2 for next
+router.get('/episode/v2', async (req: Request, res: Response) => {
+  const shows = await getShows({}, adminRequestHeaders)
+  console.log('shows!', shows)
+  res.send(shows).status(200)
+})
+
 // Blank entry form protected by auth
 router.get(
   '/episode',
