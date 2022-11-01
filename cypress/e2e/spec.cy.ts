@@ -1,3 +1,5 @@
+import { fail } from "assert"
+
 describe('main page', () => {
   it('loads', () => {
     cy.visit('localhost:3001')
@@ -60,6 +62,20 @@ describe('admin/cms', () => {
 
     cy.get('form').submit().document().get('h1').contains('Episode')
   })
+
+  it('tries to delete the admin user with an insufficient role', () => {
+    cy.request({
+      method: 'DELETE',
+      failOnStatusCode: false,
+      url: 'http://localhost:8080/api/rest/roger2@gmail.com',
+      headers: {
+        'Content-Type': 'application/json',
+        'hasura_api_key': '123456',
+      },
+    }).then((response) => {
+      expect(response.status).to.eq(400)
+    }
+  )})
 
   it('deletes the admin user', () => {
     cy.request({
