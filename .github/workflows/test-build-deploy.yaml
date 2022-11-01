@@ -28,11 +28,9 @@ jobs:
 
     - name: Build the stack
       run: |
-        sudo snap install doctl
+        docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
         mv local.env .env
-        docker-compose up -d
-      with:
-        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}        
+        docker-compose up -d      
     
     - name: Test
       uses: cypress-io/github-action@v4.2.0
