@@ -24,18 +24,15 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 16
-        cache: 'npm'      
-
-    # Install doctl.
-    - name: Install doctl
-      uses: digitalocean/action-doctl@v2
-      with:
-        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        cache: 'npm'
 
     - name: Build the stack
       run: |
         mv local.env .env
         docker-compose up -d
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}        
     
     - name: Test
       uses: cypress-io/github-action@v4.2.0
@@ -45,6 +42,12 @@ jobs:
     - name: Delete Video
       run: rm -rf ./cypress/videos
     
+    # Install doctl.
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
     # Build a Docker image of your application in your registry and tag the image with the $GITHUB_SHA.
     - name: Build container image
       run: docker build -t ${{ secrets.REGISTRY_NAME }}/app .
