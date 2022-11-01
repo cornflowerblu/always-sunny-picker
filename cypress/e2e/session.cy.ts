@@ -8,12 +8,12 @@ describe('Session testing', () => {
   const loadCookie = () => cy.getCookie('__sunnysessionauth').reload()
 
   beforeEach(() => {
-    cy.visit('localhost:3000/auth')
+    cy.visit('localhost:3001/auth')
     login('roger@gmail.com', 'goares')
   })
 
   it('has validation', () => {
-    cy.visit('localhost:3000/episode')
+    cy.visit('localhost:3001/episode')
     loadCookie()
       .get('input[name="season_number"]')
       .type('1')
@@ -29,12 +29,12 @@ describe('Session testing', () => {
   })
 
   it('allows user to navigate from episode entry screen', () => {
-    cy.visit('localhost:3000/episode')
+    cy.visit('localhost:3001/episode')
     loadCookie().contains('Edit a Show').click()
   })
 
   it('inserts a new episode', () => {
-    cy.visit('localhost:3000/episode')
+    cy.visit('localhost:3001/episode')
     loadCookie()
       .get('#show_id')
       .select("It's Always Sunny in Philadelphia")
@@ -58,7 +58,7 @@ describe('Session testing', () => {
   })
 
   it('updates an existing episode from the entry form', () => {
-    cy.visit('localhost:3000/episode')
+    cy.visit('localhost:3001/episode')
     loadCookie()
       .get('#show_id')
       .select("It's Always Sunny in Philadelphia")
@@ -82,7 +82,7 @@ describe('Session testing', () => {
   })
 
   it('creates a new season and associates with a show', () => {
-    cy.visit('localhost:3000/episode')
+    cy.visit('localhost:3001/episode')
     loadCookie()
       .get('#show_id')
       .select("It's Always Sunny in Philadelphia")
@@ -106,7 +106,7 @@ describe('Session testing', () => {
   })
 
   it('can select a show, season, episode and perform an update', () => {
-    cy.visit('localhost:3000/episode/edit')
+    cy.visit('localhost:3001/episode/edit')
     loadCookie()
       .get('#showPicker')
       .select("It's Always Sunny in Philadelphia")
@@ -134,7 +134,7 @@ describe('Session testing', () => {
 
   it('can prefill the drop-downs and allow a user to go back', () => {
     cy.visit(
-      'http://localhost:3000/episode/edit/950e38a3-3242-44dc-8585-fd30ced6627e/cb66c1a4-401c-4faa-a086-38dea1d7d9ac/a025476e-24d0-44a8-ab0c-870a7bf9eb54'
+      'http://localhost:3001/episode/edit/950e38a3-3242-44dc-8585-fd30ced6627e/cb66c1a4-401c-4faa-a086-38dea1d7d9ac/a025476e-24d0-44a8-ab0c-870a7bf9eb54'
     )
     loadCookie()
       .get('#values > form > div:nth-child(2) > div:nth-child(4) > a > input')
