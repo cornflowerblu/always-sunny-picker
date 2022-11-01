@@ -7,22 +7,6 @@ x-common-variables: &common-variables
   REST_URL: http://localhost:8080/api/rest
 
 services:
-  web:
-    image: nextjs-sunny
-    build: ./sunny-nextjs
-    ports:
-      - 3000:3000
-    environment:
-      <<: *common-variables
-      AUTH_HOOK_API_KEY: 123456
-      API_URL: http://localhost:8080/api/rest/show/:id
-    depends_on:
-      - backend
-      - hasura-webhook-auth
-      - graphql-engine
-      - db
-      - graphql-cli
-
   backend:
     image: always-sunny-picker
     build: .
