@@ -1,10 +1,10 @@
 describe('main page', () => {
   it('loads', () => {
-    cy.visit('localhost:3000')
+    cy.visit('localhost:3001')
   })
 
   it('shuffles a few episodes, generates a cookie, and can fetch details', () => {
-    cy.visit('localhost:3000')
+    cy.visit('localhost:3001')
     cy.contains('Shuffle').click()
     cy.contains('Shuffle').click()
     cy.contains('Shuffle').click()
@@ -12,7 +12,7 @@ describe('main page', () => {
   })
 
   it('should throw the error page when needed and allow the user to navigate home', () => {
-    cy.visit('localhost:3000/sdjhfkjshdfkjshdfkjsdhf', {
+    cy.visit('localhost:3001/sdjhfkjshdfkjshdfkjsdhf', {
       failOnStatusCode: false,
     })
       .document()
@@ -24,19 +24,19 @@ describe('main page', () => {
 
 describe('v2', () => {
   it('loads the v2 api', () => {
-    cy.request('localhost:3000/v2').should('exist')
+    cy.request('localhost:3001/v2').should('exist')
   })
 })
 
 describe('episode entry', () => {
   it('redirects to login without auth', () => {
-    cy.visit('localhost:3000/episode').document().get('h1').contains('Sign In')
+    cy.visit('localhost:3001/episode').document().get('h1').contains('Sign In')
   })
 })
 
 describe('admin/cms', () => {
   it('allows an admin to create a user', () => {
-    cy.visit('http://localhost:3000/admin?auth=leLvvwyorNdFjbeAfVQxGuTJgUbsxc')
+    cy.visit('http://localhost:3001/admin?auth=leLvvwyorNdFjbeAfVQxGuTJgUbsxc')
 
     cy.get('input[name="email"]')
       .type('roger2@gmail.com')
@@ -64,10 +64,10 @@ describe('admin/cms', () => {
   it('deletes the admin user', () => {
     cy.request({
       method: 'DELETE',
-      url: Cypress.env('REST_URL') + '/roger2@gmail.com',
+      url: 'http://localhost:8080/api/rest/roger2@gmail.com',
       headers: {
         'Content-Type': 'application/json',
-        'x-hasura-admin-secret': Cypress.env('GRAPHQL_ADMIN_SECRET'),
+        'x-hasura-admin-secret': 'myadminsecretkey',
       },
     })
   })
