@@ -16,3 +16,11 @@ array_relationships:
         table:
           name: seasons
           schema: public
+select_permissions:
+  - role: readonly
+    permission:
+      columns:
+        - show_name
+        - id
+      filter: {}
+      allow_aggregations: true

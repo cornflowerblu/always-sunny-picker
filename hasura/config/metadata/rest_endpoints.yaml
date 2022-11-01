@@ -7,3 +7,12 @@
     - DELETE
   name: Delete Auth User by Email
   url: :_eq
+- comment: ""
+  definition:
+    query:
+      collection_name: allowed-queries
+      query_name: Get Show Data
+  methods:
+    - GET
+  name: Get Show Data
+  url: show/:id
