@@ -7,11 +7,11 @@ x-common-variables: &common-variables
   REST_URL: http://localhost:8080/api/rest
 
 services:
-  web:
+  backend:
     image: always-sunny-picker
     build: .
     ports:
-      - '3000:3000'
+      - '3001:3000'
     environment:
       <<: *common-variables
       AUTH_TOKEN: leLvvwyorNdFjbeAfVQxGuTJgUbsxc
@@ -25,7 +25,7 @@ services:
     environment: *common-variables
     command: ['node', './workers/worker-preload.js']
     depends_on:
-      - web
+      - backend
 
   worker-preload-v2:
     image: always-sunny-picker
@@ -33,7 +33,15 @@ services:
     environment: *common-variables
     command: ['node', './workers/worker-preload-v2.js']
     depends_on:
-      - web
+      - backend
+
+  hasura-webhook-auth:
+    image: registry.digitalocean.com/always-sunny/auth-webhook
+    ports:
+      - '8000:8000'
+    environment:
+      HASURA_API_KEY: 123456
+    command: ['node', './bin/www']
 
   redis:
     image: redis
@@ -47,7 +55,7 @@ services:
   db:
     image: postgres
     ports:
-      - '5432:5432'
+      - '5555:5432'
     environment:
       POSTGRES_PASSWORD: goares
       POSTGRES_DB: shuffle
@@ -66,7 +74,7 @@ services:
       HASURA_GRAPHQL_DEV_MODE: 'true'
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
-      HASURA_GRAPHQL_AUTH_HOOK: http://0.0.0.0:8000/api/auth
+      HASURA_GRAPHQL_AUTH_HOOK: http://hasura-webhook-auth:8000/api/auth
 
   graphql-cli:
     image: ubuntu

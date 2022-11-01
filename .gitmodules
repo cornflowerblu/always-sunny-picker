@@ -1,0 +1,3 @@
+[submodule "sunny-nextjs"]
+	path = sunny-nextjs
+	url = git@github.com:cornflowerblu/sunny-nextjs.git
