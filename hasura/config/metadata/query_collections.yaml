@@ -8,3 +8,39 @@
               affected_rows
             }
           }
+      - name: Get Show Data
+        query: |
+          query ShowsData ($id: uuid!) {
+            shows_by_pk(id: $id) {
+              characters_aggregate {
+                aggregate {
+                  count
+                }
+                nodes {
+                  first_name
+                  last_name
+                  image_url
+                }
+              }
+              seasons_aggregate {
+                aggregate {
+                  count
+                }
+                nodes {
+                  id
+                  season_number
+                  episodes_aggregate {
+                    aggregate {
+                      count
+                    }
+                    nodes {
+                      id
+                      episode_number
+                      title
+                      description
+                    }
+                  }
+                }
+              }
+            }
+          }

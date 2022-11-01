@@ -13,3 +13,12 @@ array_relationships:
         table:
           name: episodes
           schema: public
+select_permissions:
+  - role: readonly
+    permission:
+      columns:
+        - season_number
+        - id
+        - show_id
+      filter: {}
+      allow_aggregations: true
