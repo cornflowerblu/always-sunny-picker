@@ -28,9 +28,9 @@ jobs:
 
     - name: Build the stack
       run: |
+        sudo snap install doctl
         mv local.env .env
         docker-compose up -d
-      uses: digitalocean/action-doctl@v2
       with:
         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}        
     
