@@ -44,3 +44,11 @@
               }
             }
           }
+      - name: Get All Shows
+        query: |
+          query GetShows {
+            shows(limit: 1000) {
+              id
+              show_name
+            }
+          }

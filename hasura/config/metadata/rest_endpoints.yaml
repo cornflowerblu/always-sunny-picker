@@ -16,3 +16,12 @@
     - GET
   name: Get Show Data
   url: show/:id
+- comment: Lists all shows
+  definition:
+    query:
+      collection_name: allowed-queries
+      query_name: Get All Shows
+  methods:
+    - GET
+  name: Get All Shows
+  url: shows
