@@ -47,10 +47,7 @@ router.post('/episode/new', async (req: Request, res: Response) => {
 
   // backend form validation
   if (!season_number || !episode_number || !title || !description)
-    return res.render('create-episode', {
-      values,
-      message: 'All fields on this form are required.',
-    })
+    return res.json('All fields on this form are required.').status(400)
 
   // create a new episode if none exists
   const id = await getIdBySeasonAndEpisode(
@@ -88,7 +85,7 @@ router.post('/episode/new', async (req: Request, res: Response) => {
         },
         adminRequestHeaders
       )
-      res.render('create-episode', { data, shows: shows.shows })
+      res.send({ data, shows: shows.shows })
     }
   } else {
     // update an existing episode
@@ -100,18 +97,13 @@ router.post('/episode/new', async (req: Request, res: Response) => {
         episode_number,
         description
       )
-      res.render('create-episode', { data, shows: shows.shows })
+      res.send({ data, shows: shows.shows })
     } catch {
       if (values) {
-        const show = await getSingleShow({ id: show_id }, adminRequestHeaders)
-        res.render('create-episode', {
-          values,
-          show_name: show.shows_by_pk.show_name,
-          message:
-            'There was a problem submitting your form, please try again.',
-        })
+        await getSingleShow({ id: show_id }, adminRequestHeaders)
+        res.json('There was a problem submitting your form, please try again.').status(500)
       } else {
-        res.render('error')
+        res.sendStatus(500)
       }
     }
   }
